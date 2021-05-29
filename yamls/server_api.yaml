@@ -1,0 +1,511 @@
+# This is the api I/O definition of online order server
+services:
+    order:
+        GET:
+            # @@@ 2 @@@
+            get_individual_performance:
+                Description: "Returns specific time range performance. This function is for the clerk 
+                to check the should-be amount of revenue collected from payment machine. 
+                NOTICE THAT ONLY ORDERS THAT ARE SERVED COUNT!!!"
+                Mandatory: []
+                Optionals: ["windowarg", "window", "constraint_list", "excluding_pos", "payment_method"]
+                OptionalDefaults: ["None", "None", "None", True, "None"]
+
+            # @@@ 3 @@@
+            get_special_day_result:
+                Description: "This function returns a list containing the addons generated 
+                from our PMF, all results should be unique. This ensures that special day results are not duplicated."
+                Mandatory: []
+                Optionals: []
+                OptionalDefaults: []
+
+            # @@@ 4 @@@
+            fetch_order:
+                Description: "Gets all order data (?)"
+                Mandatory: []
+                Optionals: []
+                OptionalDefaults: []
+
+            # @@@ 5 @@@
+            get_all_queue:
+                Description: "Gets all data in the queue"
+                Mandatory: []
+                Optionals: []
+                OptionalDefaults: []
+
+            # TODO: Add a time bound
+            # @@@ 6 @@@
+            get_timely_order:
+                Description: "Gets the order in the recently 30 minutes."
+                Mandatory: []
+                Optionals: []
+                OptionalDefaults: []
+
+            # @@@ 7 @@@
+            get_default_promotion_key:
+                Description: "Use to read the defaultpromotion and return the correct key"
+                Mandatory: []
+                Optionals: []
+                OptionalDefaults: []
+
+            # @@@ 8 @@@
+            get_daily_performance:
+                Description: "Get the daily performance of a store"
+                Mandatory: ["windowarg", "window"]
+                Optionals: ["constraint_list"]
+                OptionalDefaults: ["None"]
+
+            # @@@ 9 @@@
+            get_delivery_info:
+                Description: "Gets the detailed delivery info of the order"
+                Mandatory: []
+                Optionals: ["order_id"]
+                OptionalDefaults: ["None"]
+
+            # @@@ 10 @@@
+            get_status_by_serial_number:
+                Description: "Get order current status from serial number and user phone"
+                Mandatory: ["serial_number", "user_phone"]
+                Optionals: ["store_id"]
+                OptionalDefaults: ["DDA"]
+
+            # @@@ 11 @@@
+            get_daily_number:
+                Description: "Get daily number from total price if single price < 10"
+                Mandatory: ["window","windowarg","bowlnum"]
+                Optionals: ["constraint_list"]
+                OptionalDefaults: ["None"]
+            
+            # @@@ 12 @@@
+            get_change_amount:
+                Description: "Get change amount"
+                Mandatory: []
+                Optionals: ['order_id']
+                OptionalDefaults: ['None']
+
+            # @@@ 13 @@@
+            get_abs_coin_amount:
+                Description: "Get change amount"
+                Mandatory: []
+                Optionals: ["order_id"]
+                OptionalDefaults: ["None"]
+                Arguments:
+                    filepath: 'sample_menu/current_coin.yaml'
+
+            # @@@ 14 @@@
+            master_watchdog:
+                Description: "Send the watchdog every 30 seconds to update the last active time. (async loop)"
+                Mandatory: ['device_key', 'cart_id']
+                Optionals: ['last_sync_time', 'comment3']
+                OptionalDefaults: ['*SPECIAL-OPTIONAL*last_sync_time', '']
+
+            # @@@ 15 @@@
+            check_master_slave:
+                Description: "Check if the device is master or slave as it enters the shopping cart page. Need to check
+                last active time to see if there are duplicates pages. If last active time > 1 min, and match
+                master key, overwrite. "
+                Mandatory: ['device_key', 'cart_id']
+                Optionals: []
+                OptionalDefaults: []
+
+            # @@@ 16 @@@
+            refresh_orders:
+                Description: "Output all orders in the cart"
+                Mandatory: ['device_key', 'cart_id']
+                Optionals: []
+                OptionalDefaults: []
+
+            # @@@ 17 @@@
+            get_invoice_for_cart:
+                Description: "Output invoice image"
+                Mandatory: ['serial_number', 'telephone_number']
+                Optionals: ['store_id']
+                OptionalDefaults: ['DDA']
+
+
+        POST:
+            # @@@ 1 @@@
+            add_to_order:
+                Description: "The core of adding an order to our server"
+                Mandatory: ['store_id','price','payment_method','stayortogo','final_price','total_price', 'comment2']
+                Optionals: ['number_of_data', 'order_no', 'username', 'name1', 'name2', 'name3with4', 'name5', 'receipt_number', 'promotion','promotion_key','print_flag','xml_flag',
+                            'order_id', 'serial_number', 'comment6', 'comment7', 'status', 'order_time', 'priority', 'amount', 'discount', 'time', 'comment1','comment3','comment4','comment5','comment8']
+                OptionalDefaults: [1, "None", "None", "None", "None", "None", "None", "None", "None", "None", "None", "None", 
+                            "unassigned", "unassigned", "not_updated", "{}", "not_paid", 0, 0, 0, 0, "*SPECIAL-OPTIONAL*time", 'None', 'None', 'None', 'None', 'None']
+
+            # @@@ 2 @@@
+            execute_promotion:
+                Description: "Get the order data after applying promotion"
+                Mandatory: ['store_id','price','payment_method','stayortogo','final_price','total_price', 'comment2']
+                Optionals: ['number_of_data', 'order_no', 'username', 'name1', 'name2', 'name3with4', 'name5', 'receipt_number', 'promotion','promotion_key','print_flag','xml_flag',
+                            'order_id', 'serial_number', 'comment6', 'comment7', 'status', 'order_time', 'priority', 'amount', 'discount', 'time', 'comment1','comment3','comment4','comment5','comment8']
+                OptionalDefaults: [1, "None", "None", "None", "None", "None", "None", "None", "None", "None", "None", "None", 
+                            "unassigned", "unassigned", "not_updated", "{}", "not_paid", 0, 0, 0, 0, "*SPECIAL-OPTIONAL*time", 'None', 'None', 'None', 'None', 'None']
+
+            # @@@ 3 @@@
+            get_promotion_string:
+                Description: "This is the function to get the promotion string with the key"
+                Mandatory: ["promotion_key"]
+                Optionals: []
+                OptionalDefaults: []
+
+            # @@@ 4 @@@
+            served:
+                Description: "Change status of the order so that it is served. "
+                Mandatory: ["order_id", "order_no", "username", "status"]
+                Optionals: ['number_of_data', "last_sync_time", "time"]
+                OptionalDefaults: [1, "*SPECIAL-OPTIONAL*last_sync_time", "*SPECIAL-OPTIONAL*time"]
+
+            # @@@ 5 @@@
+            finish_payment:
+                Description: "Mark the payment status from Intella payment"
+                Mandatory: ['MchId','MethodName','Result','StoreOrderNo','TotalFee','Sign','comment2']
+                Optionals: ['number_of_data', 'Detail']
+                OptionalDefaults: [1, 'None']
+                SpecialKey: ['intella_payment_data']
+
+            # @@@ 6 @@@
+            new_cart:
+                Description: "it insert a new shopping cart entry to the database. it records 
+                the current time, so the shopping cart will expire in 1 hour. "
+                Mandatory: ["device_key"]
+                Optionals: ["last_sync_time", "time", "comment3"]
+                OptionalDefaults: ["*SPECIAL-OPTIONAL*last_sync_time", "*SPECIAL-OPTIONAL*time", "None"]
+
+            # @@@ 8 @@@
+            calibrate_change_amount:
+                Description: "This function calibrate_change by entering the correct amount"
+                Mandatory: ["coin_type", "amount"]
+                Optionals: []
+                OptionalDefaults: []
+                Arguments:
+                    filepath: 'sample_menu/current_coin.yaml'
+
+            # @@@ 9 @@@
+            verify_order:
+                Description: "Verify order from the order_data"
+                Mandatory: ['store_id','price','payment_method','stayortogo','final_price','total_price', 'comment2']
+                Optionals: ['number_of_data', 'order_no', 'username', 'name1', 'name2', 'name3with4', 'name5', 'receipt_number', 'promotion','promotion_key','print_flag','xml_flag',
+                            'order_id', 'serial_number', 'comment6', 'comment7', 'status', 'order_time', 'priority', 'amount', 'discount', 'time', 'comment1','comment3','comment4','comment5','comment8']
+                OptionalDefaults: [1, "None", "None", "None", "None", "None", "None", "None", "None", "None", "None", "None", 
+                            "unassigned", "unassigned", "not_updated", "{}", "not_paid", 0, 0, 0, 0, "*SPECIAL-OPTIONAL*time", 'None', 'None', 'None', 'None', 'None']
+                Arguments:
+                    filepath: "sample_menu/cash_status.yaml"
+
+            # @@@ 10 @@@
+            unlock_payment_machine:
+                Description: "This function calibrate_change by entering the correct amount"
+                Mandatory: ["payment_method", "comment2"]
+                Optionals: []
+                OptionalDefaults: []
+                Arguments:
+                    filepath: "sample_menu/cash_status.yaml"
+
+            # @@@ 11 @@@
+            generate_specific_promotion_key:
+                Description: "This function generates specific promotion key"
+                Mandatory: ["start_date", "end_date", "promotion_key"]
+                Optionals: ["length","usage_amount","generate_amount"]
+                OptionalDefaults: [20,1,1]
+
+            # @@@ 12 @@@
+            update_specific_promotion_key:
+                Description: "This function update specific promotion key"
+                Mandatory: []
+                Optionals: ["specific_promotion_key","batch","start_date","end_date","promotion_key","usage_amount"]
+                OptionalDefaults: ["None","None","None","None","None","None"]
+
+            # @@@ 13 @@@
+            upload_return_change_info:
+                Description: "This function calibrate_change by entering the correct amount"
+                Mandatory: ["specialid", "50", "10", "5", "1"]
+                Optionals: []
+                OptionalDefaults: []
+                Arguments:
+                    filepath: "sample_menu/changes_cache.yaml"
+
+            # @@@ 13 @@@
+            clear_changes_cache:
+                Description: "This function calibrate_change by entering the correct amount"
+                Mandatory: []
+                Optionals: []
+                OptionalDefaults: []
+                Arguments:
+                    filepath: "sample_menu/changes_cache.yaml"
+
+    menu:
+        GET:
+            # @@@ 1 @@@
+            return_menu:
+                Description: "Returns the entire menu of doday, reading from doday.yaml"
+                Mandatory: []
+                Optionals: []
+                OptionalDefaults: []
+
+            # @@@ 2 @@@
+            return_addons:
+                Description: "Return the addons."
+                Mandatory: ['store_id','username','item','category']
+                Optionals: []
+                OptionalDefaults: []
+
+            # @@@ 3 @@@
+            get_availability:
+                Description: "Get the availability status of the menu."
+                Mandatory: []
+                Optionals: []
+                OptionalDefaults: []
+
+            # @@@ 4 @@@
+            get_business_hour:
+                Description: "Get the business hour of the store 會回傳一個dictionary長這樣 {'hour': ('1130', '2200'), 'inbusiness': True} 記得json.dumps"
+                Mandatory: []
+                Optionals: ["store_id"]
+                OptionalDefaults: ["DDA"]
+
+            # @@@ 5 @@@
+            latest_news:
+                Description: "Get the latest news."
+                Mandatory: []
+                Optionals: []
+                OptionalDefaults: []
+
+            # @@@ 6 @@@
+            get_available_delivery_time:
+                Description: "Get the available deliver time of a given store. List format"
+                Mandatory: []
+                Optionals: ["store_id"]
+                OptionalDefaults: ["DDA"]
+
+            # @@@ 7 @@@
+            get_available_takeout_time:
+                Description: "Get the available takeout time of a given store. List format"
+                Mandatory: []
+                Optionals: ["store_id"]
+                OptionalDefaults: ["DDA"]
+
+            # @@@ 8 @@@
+            get_base:
+                Description: "Get the available base"
+                Mandatory: []
+                Optionals: ["store_id"]
+                OptionalDefaults: ["DDA"]
+
+            # @@@ 9 @@@
+            get_topping:
+                Description: "Get the available topping"
+                Mandatory: []
+                Optionals: ["store_id"]
+                OptionalDefaults: ["DDA"]
+
+            # @@@ 10 @@@
+            delivery_combo:
+                Description: "Get delivery combo"
+                Mandatory: ["bowls", "ice", "base", "dislike"]
+                Optionals: ["store_id"]
+                OptionalDefaults: ["DDA"]
+
+            # @@@ 11 @@@
+            delivery_combo_id_decode:
+                Description: "Get delivery combo id"
+                Mandatory: ["combo_id"]
+                Optionals: ["store_id"]
+                OptionalDefaults: ["DDA"]
+
+
+        POST:
+            # @@@ 1 @@@
+            edit_availability:
+                Description: "Modify the availability status of the menu."
+                Mandatory: ['changed_contents']
+                Optionals: []
+                OptionalDefaults: []
+
+            # @@@ 2 @@@
+            update_business_hour:
+                Description: "Update the business hour of specific days. days = ['1002', '1003'], hours = ['close', ('1230', '2100')]"
+                Mandatory: ['days', 'hours']
+                Optionals: []
+                OptionalDefaults: []
+    member:
+        GET:
+            # @@@ 1 @@@
+            get_member_info:
+                Description: "Returns the entire menu of doday, reading from doday.yaml"
+                Mandatory: ["user_phone"]
+                Optionals: ["username","user_id"]
+                OptionalDefaults: ["None","None"]
+            # @@@ 2 @@@
+            get_promotion_info:
+                Description: "Returns the entire menu of doday, reading from doday.yaml"
+                Mandatory: ["user_phone"]
+                Optionals: ["username","user_id"]
+                OptionalDefaults: ["None","None"]
+            # @@@ 3 @@@
+            get_promotion_info_readable:
+                Description: "Returns the entire menu of doday, reading from doday.yaml"
+                Mandatory: ["user_phone"]
+                Optionals: []
+                OptionalDefaults: []
+            # @@@ 4 @@@
+            get_order_history:
+                Description: "Returns the entire menu of doday, reading from doday.yaml"
+                Mandatory: ["user_phone"]
+                Optionals: ["username","user_id"]
+                OptionalDefaults: ["None","None"]
+            # @@@ 5 @@@
+            get_member_qr:
+                Description: "Returns the entire menu of doday, reading from doday.yaml"
+                Mandatory: ["user_phone"]
+                Optionals: ["username","user_id"]
+                OptionalDefaults: ["None","None"]
+            # @@@ 6 @@@
+            get_phone_by_qr:
+                Description: "Returns the entire menu of doday, reading from doday.yaml"
+                Mandatory: ["qr_code_id"]
+                Optionals: []
+                OptionalDefaults: []
+            # @@@ 7 @@@
+            login:
+                Description: "Returns the entire menu of doday, reading from doday.yaml"
+                Mandatory: ["user_phone","password"]
+                Optionals: []
+                OptionalDefaults: []
+            # @@@ 8 @@@
+            line_get_member_info:
+                Description: "Returns the entire menu of doday, reading from doday.yaml"
+                Mandatory: ["user_id"]
+                Optionals: []
+                OptionalDefaults: []
+            # @@@ 9 @@@
+            line_get_promotion_info:
+                Description: "Returns the entire menu of doday, reading from doday.yaml"
+                Mandatory: ["user_id"]
+                Optionals: []
+                OptionalDefaults: []
+            # @@@ 10 @@@
+            line_get_order_history:
+                Description: "Returns the entire menu of doday, reading from doday.yaml"
+                Mandatory: ["user_id"]
+                Optionals: []
+                OptionalDefaults: []
+            # @@@ 11 @@@
+            line_get_member_qr:
+                Description: "Returns the entire menu of doday, reading from doday.yaml"
+                Mandatory: ["user_id"]
+                Optionals: []
+                OptionalDefaults: []
+            # @@@ 12 @@@    
+            line_get_reward_points:
+                Description: "Returns the entire menu of doday, reading from doday.yaml"
+                Mandatory: ["user_id"]
+                Optionals: []
+                OptionalDefaults: []
+        POST:   
+            # @@@ 1 @@@
+            register_member:
+                Description: "Asserts the formatting of this server's POST requests and returns the expected user_data in the form a dictionary"
+                Mandatory: ["username","user_phone","gender","birthday"]
+                Optionals: ["reward_points","time","activation_time","user_id","national_id","user_phone","user_email","user_address","password","qr_code_id","membership_level","payment_method","favorite_items","enablekey","owned_promotion_keys","qr_code_address","account_verification","store_id","store_name","activation_key","feedback",'comment1','comment2','comment3','comment4','comment5','comment6','comment7','comment8','comment9','comment10']
+                OptionalDefaults: ["0","*SPECIAL-OPTIONAL*time","*SPECIAL-OPTIONAL*time","None","None","None","None","None","None","None","None","None","None","None","None","None","None","None","None","None","None","None","None","None","None","None","None","None","None","None","None"]   
+            # @@@ 2 @@@
+            edit_member_info:
+                Description: ""
+                Mandatory: ["user_phone","edit_info_dict"]
+                Optionals: []
+                OptionalDefaults: []
+            # @@@ 3 @@@
+            sync_member_info_from_local:
+                Description: ""
+                Mandatory: ["member_info_list","not_synced_member","one_time_promotion"]
+                Optionals: []
+                OptionalDefaults: []
+            # @@@ 4 @@@
+            add_new_promotion:
+                Description: ""
+                Mandatory: ["user_phone","new_promotion_list"]
+                Optionals: []
+                OptionalDefaults: []
+            # @@@ 5 @@@
+            clear_used_promotion:
+                Description: ""
+                Mandatory: ["user_phone","used_promotion_list"]
+                Optionals: []
+                OptionalDefaults: []
+            # @@@ 6 @@@
+            update_one_time_promotion:
+                Description: ""
+                Mandatory: []
+                Optionals: ["update_one_time_promotion"]
+                OptionalDefaults: [""]
+            # @@@ 7 @@@
+            delete_not_useable_promotion:
+                Description: ""
+                Mandatory: []
+                Optionals: []
+                OptionalDefaults: []
+            # @@@ 8 @@@
+            add_bottle_point:
+                Description: ""
+                Mandatory: ["label","user_phone"]
+                Optionals: []
+                OptionalDefaults: []
+    inventory:
+        GET:
+            # @@@ 1 @@@
+            get_inventory:
+                Description: ""
+                Mandatory: ['material_id']
+                Optionals: []
+                OptionalDefaults: []
+            # @@@ 2 @@@
+            get_all_inventory:
+                Description: ""
+                Mandatory: []
+                Optionals: []
+                OptionalDefaults: []
+        POST:
+          # @@@ 1 @@@
+            calibrate:
+                Description: ""
+                Mandatory: ['material_id','amount']
+                Optionals: []
+                OptionalDefaults: []
+            # @@@ 2 @@@
+            inventoryinit:
+                Description: ""
+                Mandatory: []
+                Optionals: ["reboot"]
+                OptionalDefaults: [False]
+                Arguments:
+                    filepath1: "sample_menu/doday_inventory_level.yaml"
+                    filepath2: "sample_menu/doday.yaml"                         
+            # @@@ 3 @@@
+            inventoryamount:
+                Description: ""
+                Mandatory: []
+                Optionals: []
+                OptionalDefaults: []        
+            # @@@ 4 @@@
+            requestinventory:
+                Description: ""
+                Mandatory: ['material_id','requestamount']
+                Optionals: []
+                OptionalDefaults: []
+            # @@@ 5 @@@
+            receiveinventory:
+                Description: ""
+                Mandatory: []
+                Optionals: ['material_id','receiveamount']
+                OptionalDefaults: ["None","None"]
+                Arguments:
+                    filepath1: "sample_menu/doday_inventory_level.yaml"
+                    filepath2: "sample_menu/doday.yaml"
+    data:
+        GET:
+            # @@@ 1 @@@
+            data_information:
+                Description: ""
+                Mandatory: ['username','table','output_type']
+                Optionals: ['window','windowarg','constraint','plotting_method','mode','domain']
+                OptionalDefaults: ['None','None','None','None','line','time']       
