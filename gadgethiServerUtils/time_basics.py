@@ -1,6 +1,7 @@
 import datetime
 import time
 import logging
+from enum import Enum
 
 class TimeMode(Enum):
 	EPOCH = 1
