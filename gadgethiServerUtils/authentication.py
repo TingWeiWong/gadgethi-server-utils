@@ -82,7 +82,7 @@ class GadgethiHMAC256Verification():
 		equals the message after applying hmac256. 
 		"""
 		encryption_result = HMAC256_digest(secret, message, mode=mode)
-		return encryption_result == self.encrypted_message:
+		return encryption_result == self.encrypted_message
 
 	def gserver_authentication(self, message, check_time, secret='gadgethi',interval=30):
 		"""
