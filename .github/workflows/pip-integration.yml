@@ -37,7 +37,11 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
       run: |
-        pytest tests.py --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
+        cd gadgethiServerUtils
+        python -m unittest -v tests/test*
+        coverage run -m unittest
+        coverage report
+        coverage html
     - name: Upload pytest test results
       uses: actions/upload-artifact@v2
       with:
