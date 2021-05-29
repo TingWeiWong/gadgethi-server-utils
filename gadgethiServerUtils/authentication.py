@@ -84,7 +84,7 @@ class GadgethiHMAC256Verification():
 		encryption_result = HMAC256_digest(secret, message, mode=mode)
 		return encryption_result == self.encrypted_message
 
-	def gserver_authentication(self, message, check_time, secret='gadgethi',interval=30):
+	def gserver_authentication(self, message, check_time, secret, interval=30):
 		"""
 		This is the verfication function
 		for gserver http handler. 

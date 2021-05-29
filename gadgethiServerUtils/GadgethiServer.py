@@ -208,7 +208,7 @@ class GadgetHiHTTPHandler(SimpleHTTPRequestHandler):
 
 		#This part handles the authentication for gadgethi
 		auth = GadgethiHMAC256Verification(headers['Hmac256-Result'])
-		c = auth.gserver_authentication(str(headers['Gadgethi-Key'])+str(headers['time']), headers['time'])
+		c = auth.gserver_authentication(str(headers['Gadgethi-Key'])+str(headers['time']), headers['time'], configs["gadgethi_secret"])
 		if c['indicator']:
 			logging.info("authentication pass"+headers['Gadgethi-Key']+headers['Hmac256-Result']+headers['time'])
 		else:
