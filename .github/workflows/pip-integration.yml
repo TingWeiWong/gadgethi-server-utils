@@ -5,9 +5,9 @@ name: Python package
 
 on:
   push:
-    branches: [ gserver-devel ]
+    branches: [ master ]
   pull_request:
-    branches: [ gserver-devel ]
+    branches: [ master ]
 
 jobs:
   build:
