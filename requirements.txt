@@ -1,0 +1,4 @@
+pycryptodomex
+pyyaml==5.1
+psycopg2-binary
+boto3

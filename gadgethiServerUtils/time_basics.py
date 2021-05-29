@@ -2,6 +2,31 @@ import datetime
 import time
 import logging
 
+class TimeMode(Enum):
+	EPOCH = 1
+	STRING = 2
+	DATETIME_NOW = 3
+
+def serverTime(mode=TimeMode.EPOCH):
+	"""
+	This defines the current server time.
+	Make sure all time related function take 
+	on this time. 
+	* Input:
+		mode: the mode of the serverTime representation. If
+			not specified -> epoch time will be returned
+	* Returns a datetime object
+	"""
+	server_time = datetime.datetime.now()
+	
+	if mode == TimeMode.EPOCH:
+		return server_time.time()
+	elif mode == TimeMode.STRING:
+		return server_time.strftime("%m/%d/%Y, %H:%M:%S")
+	elif mode == TimeMode.DATETIME_NOW:
+		return server_time
+
+
 def is_time_between(begin_time, end_time, check_time=None):
     # If check time is not given, default to current UTC time
     check_time = check_time or datetime.datetime.utcnow().time()
