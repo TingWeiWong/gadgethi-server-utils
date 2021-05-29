@@ -1,7 +1,0 @@
-# This is the config for the tvscreen
-h_image_list: ["img/h_pic_6.png", "img/logo_yellow.png", "img/h_pic_1.png", "img/return_tray.png", "img/h_pic_2.png",
-  "img/logo_black.png", "img/h_pic_3.png", "img/return_tray.png", "img/h_pic_4.png",
-  "img/logo_yellow.png", "img/h_pic_5.png", "img/return_tray.png"]
-v_image_list: ["img/v_pic_1.png", "img/v_pic_2.png", "img/v_pic_3.png", "img/v_pic_4.png"]
-# in seconds
-img_waittime: 15
