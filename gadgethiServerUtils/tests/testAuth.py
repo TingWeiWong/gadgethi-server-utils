@@ -1,5 +1,5 @@
 import unittest
-from gadgethiServerUtils.authentication import GadgethiHMAC256Encryption, GadgethiHMAC256Verification
+from authentication import GadgethiHMAC256Encryption, GadgethiHMAC256Verification
 
 class AuthenticationTests(unittest.TestCase):
     """
