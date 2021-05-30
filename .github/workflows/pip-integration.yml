@@ -16,21 +16,54 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [3.6, 3.7]
         include:
-          - package_name: gadgethiServerUtils
+          - python: 3.6
+            postgres: 10
+          - python: 3.7
+            postgres: 11
+          - python: 3.8
+            postgres: 12
+          - python: 3.9
+            postgres: 13
+
+          # Opposite extremes of the supported Py/PG range, other architecture
+          - python: 3.6
+            postgres: 13
+            architecture: 'x86'
+          - python: 3.9
+            postgres: 9.5
+            architecture: 'x86'
+
+    env:
+      PSYCOPG2_TESTDB: postgres
+      PSYCOPG2_TESTDB_HOST: 127.0.0.1
+      PSYCOPG2_TESTDB_USER: postgres
+      PSYCOPG2_TESTDB_PASSWORD: password
+
+    services:
+      postgresql:
+        image: postgres:${{ matrix.postgres }}
+        env:
+          POSTGRES_PASSWORD: password
+        ports:
+          - 5432:5432
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Python ${{ matrix.python-version }}
+    - name: Set up Python ${{ matrix.python }}
       uses: actions/setup-python@v2
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: ${{ matrix.python }}
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        python -m pip install flake8 pytest pytest-cov
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        python -m pip install flake8 tox
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
@@ -39,8 +72,7 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Run tests and coverage report
       run: |
-        cd gadgethiServerUtils
-        python -m unittest -v tests/test*
+        tox -e ${{ matrix.python }}
         coverage run -m unittest
         coverage report
         coverage html
