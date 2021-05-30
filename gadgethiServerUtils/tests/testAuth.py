@@ -14,6 +14,8 @@ class AuthenticationTests(unittest.TestCase):
     # ----------------------------
     def test_GadgethiHMAC256Encryption_instantiate_ok(self):
         gAuthEncryptor = GadgethiHMAC256Encryption("test-key", "test-secret")
+        for i in range(10000):
+            pass
         self.assertIsNotNone(gAuthEncryptor, "could not instantiate calculator")
 
 
