@@ -1,55 +1,68 @@
 import datetime
 import time
 import logging
+import re
 from enum import Enum
 
 class TimeMode(Enum):
-	EPOCH = 1
-	STRING = 2
-	DATETIME_NOW = 3
+    EPOCH = 1
+    STRING = 2
+    DATETIME_NOW = 3
 
 def serverTime(mode=TimeMode.EPOCH):
-	"""
-	This defines the current server time.
-	Make sure all time related function take 
-	on this time. 
-	* Input:
-		mode: the mode of the serverTime representation. If
-			not specified -> epoch time will be returned
-	* Returns a datetime object
-	"""
-	server_time = datetime.datetime.now()
-	
-	if mode == TimeMode.EPOCH:
-		return server_time.timestamp()
-	elif mode == TimeMode.STRING:
-		return server_time.strftime("%m/%d/%Y, %H:%M:%S")
-	elif mode == TimeMode.DATETIME_NOW:
-		return server_time
+    """
+    This defines the current server time.
+    Make sure all time related function take 
+    on this time. 
+    * Input:
+        mode: the mode of the serverTime representation. If
+            not specified -> epoch time will be returned
+    * Returns a datetime object
+    """
+    server_time = datetime.datetime.now()
+    
+    if mode == TimeMode.EPOCH:
+        return server_time.timestamp()
+    elif mode == TimeMode.STRING:
+        return server_time.strftime("%m/%d/%Y, %H:%M:%S")
+    elif mode == TimeMode.DATETIME_NOW:
+        return server_time
 
 
 def is_time_between(begin_time, end_time, check_time=None):
+    """
+    This is the function to check whether the check time is between
+    begin_time and end_time. Input types are datetime objects. 
     # If check time is not given, default to current UTC time
+    """
     check_time = check_time or datetime.datetime.utcnow().time()
-    if begin_time < end_time:
+    if begin_time <= end_time:
         return check_time >= begin_time and check_time <= end_time
     else: # crosses midnight
         return check_time >= begin_time or check_time <= end_time
 
 def check_operation_hours(**kwargs):
-	"""
-	Given opening_time, closing_time. 
-	return True if it's is within operation hours. 
-	return False if not.
-	"""
-	opening_time, closing_time = kwargs["opening_time"], kwargs["closing_time"]
+    """
+    Given opening_time, closing_time. 
+    return True if it's is within operation hours. 
+    return False if not.
 
-	opening_hour, opening_minute = int(opening_time[:2]), int(opening_time[3:])
-	closing_hour, closing_minute = int(closing_time[:2]), int(closing_time[3:])
-	logging.info("[VerifyOperationHour] opening_hour, closing_hour = "+ str(opening_hour) + str(closing_hour))
+    - Input
+        * opening_time, closing_time: 08:00, 10:00, XX
+    """
+    # HH:MM regex
+    hhmmregex = "^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$"
+    opening_time, closing_time = kwargs["opening_time"], kwargs["closing_time"]
 
-	start_time = datetime.time(opening_hour,opening_minute)
-	end_time = datetime.time(closing_hour,closing_minute)
-	current_time = datetime.datetime.now().time()
+    if not bool(re.search(hhmmregex, opening_time)) or (not bool(re.search(hhmmregex, closing_time))):
+        return False
 
-	return is_time_between(start_time, end_time, current_time)
+    opening_hour, opening_minute = int(opening_time[:2]), int(opening_time[3:])
+    closing_hour, closing_minute = int(closing_time[:2]), int(closing_time[3:])
+    logging.info("[VerifyOperationHour] opening_hour, closing_hour = "+ str(opening_hour) + str(closing_hour))
+
+    start_time = datetime.time(opening_hour,opening_minute)
+    end_time = datetime.time(closing_hour,closing_minute)
+    current_time = datetime.datetime.now().time()
+
+    return is_time_between(start_time, end_time, current_time)
