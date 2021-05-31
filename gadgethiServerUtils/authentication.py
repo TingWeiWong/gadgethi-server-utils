@@ -3,7 +3,7 @@ from gadgethiServerUtils.time_basics import *
 from Cryptodome.Hash import SHA256, HMAC
 from base64 import b64decode, b64encode
 
-def HMAC256_digest(self,secret,message,mode='base64'):
+def HMAC256_digest(secret,message,mode='base64'):
     """
     This is the main HMAC256 digest function
     to encrypt the input message with 
@@ -27,11 +27,19 @@ Performs gadgethi HMAC256
 Encryption. 
 """
 class GadgethiHMAC256Encryption():
-    # First the header should increase two fields (1) key (2) secret (3) time
-    # key and the secret will be given 
-    # You need to put key, time, hmac_result in the header file 
-    # Please call authentication to get the need information dictionary in the header file
+    """
+    Methods:
+        * hmac256_encryption: general encryption function
+            for encrypting message to hmac256
+        * getGServerAuthHeaders: This is specifically for gserver
+            authentication headers and prepare the header
+            for http POST and GET. 
+    """
     def __init__(self, key, secret):
+        """
+        @params key: string
+        @params secret: string
+        """
         self.key = str(key) 
         self.secret = str(secret)
 
@@ -50,7 +58,7 @@ class GadgethiHMAC256Encryption():
         """
         auth_dict = {}
         auth_dict['Gadgethi-Key'] = self.key
-        auth_dict['Hmac256-Result'] = self.HMAC256_encryption(self.key+str(serverTime()))
+        auth_dict['Hmac256-Result'] = self.hmac256_encryption(self.key+str(serverTime()))
         auth_dict['time'] = str(serverTime())
         return auth_dict
 

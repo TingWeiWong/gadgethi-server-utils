@@ -21,7 +21,7 @@ def serverTime(mode=TimeMode.EPOCH):
 	server_time = datetime.datetime.now()
 	
 	if mode == TimeMode.EPOCH:
-		return server_time.time()
+		return server_time.timestamp()
 	elif mode == TimeMode.STRING:
 		return server_time.strftime("%m/%d/%Y, %H:%M:%S")
 	elif mode == TimeMode.DATETIME_NOW:
