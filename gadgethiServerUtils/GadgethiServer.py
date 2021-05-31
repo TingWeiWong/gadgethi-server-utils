@@ -261,15 +261,34 @@ class GadgetHiHTTPHandler(SimpleHTTPRequestHandler):
 
 		self.split_body(new_str, dictionary["values"])
 
-
+"""
+Represents the main class of 
+gadgethi server.
+"""
 class GadgetHiServer(HTTPServer):
 	"""
-	This is the main server. 
+	Schemes:
+		gadgethi server scheme and custom server scheme.
+
+	@params table_list: a list of table that is going to be used by this server. 
+	@params initialized_func_list: a list of functions to init the db tables.
+	@params desc: description of the server
+	@params yaml_exccondition: a function that defines the exception condition. If return 
+		True, don't pull it (exception). Otherwise, False.
+	@params configs: All the other configurations setting
+	@params service_handler: If using gadgethi server scheme, this is the service handler function
+	@params http_handler_cls: Init HTTP handler for HTTP Server class.
+	@params config_path: file path to server config yaml
+	@params credential_path: file path to credential yaml
+	@params custom_event_handler: If using custom server scheme, this is the handler function
+	@params fetch_yaml_from_s3: Defaults to true, fetching yaml from s3. Set it to false if 
+		you don't want to pull anything from s3
+	@params authentication: Set to true if need to turn on header authentication
 	"""
-	def __init__(self, test=False, table_list=[], initialize_func_list=[], desc="GadgetHi Main", 
+	def __init__(self, table_list=[], initialize_func_list=[], desc="GadgetHi Main", 
 		yaml_exccondition=lambda :False, configs={}, service_handler=lambda: None, 
-		http_handler_cls=None, config_path="", custom_event_handler=None, fetch_yaml_from_s3=True, 
-		authentication=True):
+		http_handler_cls=None, config_path="", credential_path="",custom_event_handler=None, 
+		fetch_yaml_from_s3=True, authentication=True, **kwargs):
 
 		self.server_config = load_config(config_path)
 		self.credentials_config = load_config(expanduser("~") + "/.gserver/credentials.yaml")
@@ -282,12 +301,8 @@ class GadgetHiServer(HTTPServer):
 		self.http_handler = http_handler_cls
 		self.desc = desc
 
-		if not test:
-			self.host = self.server_config["server_address"]
-			self.port = int(self.server_config["server_port"])
-		else:
-			self.host = self.server_config["test_server_address"]
-			self.port = int(self.server_config["test_server_port"])
+		self.host = self.server_config["server_address"]
+		self.port = int(self.server_config["server_port"])
 
 		local_server_address = (self.host, self.port)
 		super().__init__(local_server_address, self.http_handler)
@@ -322,6 +337,7 @@ class GadgetHiServer(HTTPServer):
 			init_func()
 
 		print("*** Server Initialized ***")
+		logging.info("*** "+self.desc+" Log Initialized *** ")
 
 	def run(self):
 		"""

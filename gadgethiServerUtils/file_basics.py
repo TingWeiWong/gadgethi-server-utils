@@ -44,7 +44,7 @@ def read_config_yaml(fn):
 		dict: a config dictionary
 	"""
 	try:
-		with open(fn) as file:
+		with open(fn, 'r', encoding="utf-8") as file:
 			# The FullLoader parameter handles the conversion from YAML
 			# scalar values to Python the dictionary format
 			config_yaml = yaml.load(file, Loader=yaml.FullLoader)
