@@ -291,7 +291,7 @@ class GadgetHiServer(HTTPServer):
 		fetch_yaml_from_s3=True, authentication=True, **kwargs):
 
 		self.server_config = load_config(config_path)
-		self.credentials_config = load_config(expanduser("~") + "/.gserver/credentials.yaml")
+		self.credentials_config = load_config(credential_path)
 		self.server_api_path = self.server_config["server_api_path"]
 		self.server_api_dict = read_config_yaml(self.server_api_path)
 
