@@ -4,7 +4,7 @@ from urllib.parse import unquote
 from io import BytesIO, BufferedReader
 import threading
 
-from gadgethiServerUtils.exceptions import *
+from gadgethiServerUtils._exceptions import *
 from gadgethiServerUtils.db_operations import *
 from gadgethiServerUtils.authentication import *
 from gadgethiServerUtils.file_basics import *

@@ -3,7 +3,7 @@ import os
 import time
 import psycopg2
 from enum import Enum
-from gadgethiServerUtils.exceptions import *
+from gadgethiServerUtils._exceptions import *
 import copy
 import ast
 import sys

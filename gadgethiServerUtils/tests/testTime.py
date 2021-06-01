@@ -26,7 +26,7 @@ class TimeTests(unittest.TestCase):
 
     # covers is_time_between
     def test_is_time_between(self):
-        self.assertFalse(is_time_between(datetime.time(12, 10), datetime.time(10, 10)), "check time between, begin > end")
+        self.assertFalse(is_time_between(datetime.time(12, 10), datetime.time(10, 10), datetime.time(11, 10)), "check time between, begin > end")
 
         self.assertTrue(is_time_between(datetime.time(10, 10), datetime.time(10, 10), datetime.time(10, 10)), "check time between, begin = end")
 
