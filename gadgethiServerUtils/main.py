@@ -25,7 +25,7 @@ def command_line_interface(args=None, arglist=None):
         args = parser.parse_args(arglist)
 
     if args.command == "configure":
-        from scripts import generate_configs
+        from _configs import generate_configs
 
         # make sure the arguments meet the regex
         yaml_regex = "^.+\.yaml$"
@@ -34,7 +34,7 @@ def command_line_interface(args=None, arglist=None):
             print("Args %s is not a yaml file" % args.args[0])
             sys.exit(-1)
 
-        generate_configs.generate_configs(args.args[0])
+        generate_configs(args.args[0])
 
     else:
         print("Unknown command %s" % args.command)

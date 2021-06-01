@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-from gadgethiServerUtils.db_operations import *
 import os 
 import ast 
 import yaml
@@ -140,7 +139,7 @@ def init_log(log_parent_directory):
 	try:
 		LOG_FILE_PATH = log_parent_directory + str(datetime.datetime.now().strftime("%Y-%m-%d_%H-%M")) + ".txt"
 	except:
-		raise GadosServerError("Cannot create log file path")
+		raise Exception("Cannot create log file path")
 
 	# level implies that the logger will write all messages greater than level = INFO
 	logging.basicConfig(filename=LOG_FILE_PATH, level=logging.INFO)
