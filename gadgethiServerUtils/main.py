@@ -25,7 +25,7 @@ def command_line_interface(args=None, arglist=None):
         args = parser.parse_args(arglist)
 
     if args.command == "configure":
-        from _configs import generate_configs
+        from scripts.generate_configs import generate_configs
 
         # make sure the arguments meet the regex
         yaml_regex = "^.+\.yaml$"
