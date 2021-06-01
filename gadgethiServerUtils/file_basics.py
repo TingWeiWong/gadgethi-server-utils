@@ -1,28 +1,10 @@
+#!/usr/bin/env python3
 from gadgethiServerUtils.db_operations import *
 import os 
 import ast 
 import yaml
 import datetime
 import logging
-
-#!/usr/bin/env python3
-#-*-coding:utf-8 -*-
-#######################################################################
-## {Description}
-## server util functions for file handling functionality
-#######################################################################
-
-## {License_info}
-#######################################################################
-## Author: Andrew
-## Copyright: Copyright 2020, GadgetHitech
-## Credits: [{credit_list}]
-## License: {license}
-## Version: redbean-devel-v1.2.2
-## Maintainer: Andrew
-## Email: {contact_email}
-## Status: redbean-devel
-#######################################################################
 
 # Main API function
 # -------------------------

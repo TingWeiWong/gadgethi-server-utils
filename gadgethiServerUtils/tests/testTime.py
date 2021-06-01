@@ -14,6 +14,11 @@ class TimeTests(unittest.TestCase):
 
     - check_operation_hours
         - partition on opening_time, closing_time: open < close, open = close, open > close, XX
+
+    - timeout
+        - partition on timeout time: 0, 1, >1
+        - partition on execution time: 0, 1, >1
+        - partition on results: timedout, no timeout
     """
 
     # covers serverTime modes
@@ -61,3 +66,30 @@ class TimeTests(unittest.TestCase):
         self.assertEqual(check_operation_hours(**args_dict), \
             datetime.datetime.now().time() >= datetime.time(10, 10) and datetime.datetime.now().time() <= datetime.time(10, 10))
 
+    # covers all timeout
+    def test_timeout(self):
+
+        @timeout(0)
+        def test_sleep_0(n):
+            time.sleep(n)
+            return 'Done'
+
+        @timeout(1)
+        def test_sleep_1(n):
+            time.sleep(n)
+            return 'Done'
+
+        @timeout(5)
+        def test_sleep_5(n):
+            time.sleep(n)
+            return 'Done'
+
+        with self.assertRaises(TimeoutError):
+            test_sleep_0(1)
+
+        with self.assertRaises(TimeoutError):
+            test_sleep_1(2)
+
+        self.assertEqual(test_sleep_5(0), "Done")
+        self.assertEqual(test_sleep_1(0), "Done")
+        self.assertEqual(test_sleep_5(1.2), "Done")

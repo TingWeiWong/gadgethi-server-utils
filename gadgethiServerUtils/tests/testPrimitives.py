@@ -1,5 +1,8 @@
 import unittest
 import copy
+import sys
+import traceback
+import inspect
 from gadgethiServerUtils._configs import *
 from gadgethiServerUtils._exceptions import *
 
@@ -12,6 +15,10 @@ class PrimitiveTests(unittest.TestCase):
         * check_req
             - partition on input dict: empty dictionary, >0 keys dictionary
             - partition on return: fully matched, one matches, fully no match
+
+    - GadosServerError
+        * constructor
+            - partition on construction type: from exc, from constructor
     """
 
     # covers configs modes
@@ -55,5 +62,29 @@ class PrimitiveTests(unittest.TestCase):
         self.assertFalse(status)
         self.assertEqual(modified_dict, result_configs)
 
+    def test_gados_server_error_from_exc(self):
+        try:
+            cl = inspect.getframeinfo(inspect.currentframe()).lineno
+            a = 1/0
+        except Exception as e:
+            _, _, exc_tb = sys.exc_info()
+            fobj = traceback.extract_tb(exc_tb)[-1]
+            fname = fobj.filename
+            line_no = fobj.lineno
+
+            gse = GadosServerError.buildfromexc(str(e), fname, line_no, ''.join(traceback.format_tb(exc_tb)))
+            response = gse.json_response
+
+        self.assertTrue(isinstance(gse, (GadosServerError)))
+        self.assertTrue({"indicator", "message"}.issubset(set(response.keys())))
+        self.assertFalse(response["indicator"])
+        self.assertEqual(line_no, cl+1)
+
+    def test_exception_raises(self):
+        with self.assertRaises(GadosServerError):
+            raise GadosServerError("Error")
+
+        with self.assertRaises(LackOfArgumentsError):
+            raise LackOfArgumentsError(["lackingArg"])
 
 

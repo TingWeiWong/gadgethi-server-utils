@@ -4,6 +4,10 @@ import logging
 import re
 from enum import Enum
 
+# For timeout function
+# ------------------------------
+import concurrent.futures as futures
+
 class TimeMode(Enum):
     EPOCH = 1
     STRING = 2
@@ -66,3 +70,31 @@ def check_operation_hours(**kwargs):
     current_time = datetime.datetime.now().time()
 
     return is_time_between(start_time, end_time, current_time)
+
+
+def timeout(timelimit):
+    """
+    The timeout decorator for functions to raise
+    Timeout error if certain timelimit is reached. 
+    This is from 
+    https://stackoverflow.com/questions/56356125/setting-timeout-limit-on-windows-with-python-3-7
+    which is compatible for Windows and UNIX system unlike the "signal" approach
+    """
+    def decorator(func):
+        def decorated(*args, **kwargs):
+            with futures.ThreadPoolExecutor(max_workers=1) as executor:
+                future = executor.submit(func, *args, **kwargs)
+                try:
+                    result = future.result(timelimit)
+                except futures.TimeoutError:
+                    logging.error('[TIMEOUT] Timeout '+str(timelimit)+" sec triggered...")
+                    raise TimeoutError from None
+                else:
+                    logging.info(result)
+                executor._threads.clear()
+                futures.thread._threads_queues.clear()
+                return result
+        return decorated
+    return decorator
+
+

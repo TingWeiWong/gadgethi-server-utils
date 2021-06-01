@@ -1,13 +1,9 @@
-#-*-coding:utf-8 -*-
-from DodayUtils._dwrappers import *
 import requests
-import urllib.parse
-import datetime
-# from Cryptodome.Hash import SHA256, HMAC
-# from base64 import b64decode, b64encode
 from gadgethiServerUtils.authentication import *
+from gadgethiServerUtils.time_basics import timeout
 
-class DodayHttpClient:
+
+class GadgetHiClient:
 	"""
 	This is the http client
 	class. 
@@ -20,10 +16,8 @@ class DodayHttpClient:
 	def __getitem__(self, key):
 		return getattr(self, key)
 	
-	@dutils	
-	def client_get(self, key, input_dict,gauth=False,**configs):
-		
-
+	@timeout(5)
+	def client_get(self, key, input_dict, gauth=False, **configs):
 		
 		get_query = self[key]
 
@@ -37,25 +31,23 @@ class DodayHttpClient:
 
 		if gauth:
 			# authentication
-			a = GadgethiAuthenticationStandardEncryption(configs['gadgethi_key'],configs['gadgethi_secret'])
-			headers = a.authentication_encryption()
+			a = GadgethiHMAC256Encryption(configs['gadgethi_key'],configs['gadgethi_secret'])
+			headers = a.getGServerAuthHeaders()
 			r = requests.get(get_query,headers=headers)
 		else:
 			r = requests.get(get_query)
 		response = r.text 
 		return response
-		
-	@dutils	
+
+	@timeout(5)
 	def client_post(self, key, input_dict,gauth=False,urlencode=False, **configs):
-		# authentication
-		# a = GadgethiAuthenticationStandardEncryption(configs['gadgethi_key'],configs['gadgethi_secret'])
-		# headers = a.authentication_encryption()
+
 		post_query = self[key]
 
 		if gauth:
 			# authentication
-			a = GadgethiAuthenticationStandardEncryption(configs['gadgethi_key'],configs['gadgethi_secret'])
-			headers = a.authentication_encryption()
+			a = GadgethiHMAC256Encryption(configs['gadgethi_key'],configs['gadgethi_secret'])
+			headers = a.getGServerAuthHeaders()
 
 			if urlencode:
 				r = requests.post(post_query, data=input_dict,headers=headers)
@@ -71,4 +63,3 @@ class DodayHttpClient:
 			response = r.text
 
 		return response
-

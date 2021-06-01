@@ -26,12 +26,6 @@ BS = AES.block_size
 pad = lambda s: s + (BS - len(s) % BS) * chr(BS - len(s) % BS)
 unpad = lambda s : s[:-ord(s[len(s)-1:])]
 
-# Get current time in YYMMDDHHMMSS form
-def get_time_to_second():
-	return datetime.today().strftime('%Y%m%d%H%M%S')
-def get_time_to_day():
-	return datetime.today().strftime('%Y%m%d')
-
 class GadgetEncryption:
 	def __init__(self, key, iv, pub_key=None, AES_decode_mode='base64'):
 		"""
