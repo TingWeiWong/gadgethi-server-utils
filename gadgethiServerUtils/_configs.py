@@ -31,7 +31,7 @@ class GServerConfigs:
         "opening_time": "10:00",
         "closing_time": "23:50",
 
-        "database_name": "gadgethi-database-001",
+        "database_name": "postgres",
         "order_invoice_bucket": "doday-order-invoice",
         "order_invoice_url_header": "https://doday-order-invoice.s3-ap-southeast-1.amazonaws.com/",
         

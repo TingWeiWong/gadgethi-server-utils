@@ -5,7 +5,8 @@ from gadgethiServerUtils.GadgethiServer import *
 class GServerTests(unittest.TestCase):
     """
     Testing Strategy
-
+    
+    @ GServer
     - constructor:
         partition on table_list: length 0, >0
         partition on initialized_func_list: length 0, >0
@@ -24,6 +25,24 @@ class GServerTests(unittest.TestCase):
         partition on authentication: with auth header, without auth header
         partition on event handler type: custom event handler, gadgethi service handler
         partition on POST application types: json, urlencode, raw
+
+    @GClient
+    - constructor:
+        partition on input kwargs: with '_http_url' string, without http_url string    
+
+    - client_get:
+        partition on key: key exists, key not exists
+        partition on input_dict: empty, keys > 0, input_dict key type not string
+        partition on timeout status: timeout, not timeout
+        partition on gauth: True, False
+
+    - client_post:
+        partition on key: key exists, key not exists
+        partition on input_dict: empty, keys > 0, input_dict key type not string
+        partition on timeout status: timeout, not timeout
+        partition on gauth: True, False
+        partition on urlencode: True, False
+
     """
 
     def start_server_instance(self, **kwargs):
