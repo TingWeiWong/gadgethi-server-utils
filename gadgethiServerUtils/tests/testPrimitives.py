@@ -45,19 +45,22 @@ class PrimitiveTests(unittest.TestCase):
     def test_check_configs_requirements_matching(self):
         status, modified_dict = GServerConfigs.check_current_configs_match_reqs({})
         self.assertFalse(status)
-        self.assertEqual(modified_dict, GServerConfigs.basic_configs)
+
+        default_configs = copy.deepcopy(GServerConfigs.basic_configs)
+        default_configs.update(GServerConfigs.aws_configs)
+        self.assertEqual(modified_dict, default_configs)
 
 
-        status, modified_dict = GServerConfigs.check_current_configs_match_reqs(GServerConfigs.basic_configs)
+        status, modified_dict = GServerConfigs.check_current_configs_match_reqs(default_configs)
         self.assertTrue(status)
-        self.assertEqual(modified_dict, GServerConfigs.basic_configs)
+        self.assertEqual(modified_dict, default_configs)
 
         test_configs = {
             "log_file_path": "dummy_path",
             "some_random_key": "some_random_value"
         }
         status, modified_dict = GServerConfigs.check_current_configs_match_reqs(test_configs)
-        result_configs = copy.deepcopy(GServerConfigs.basic_configs)
+        result_configs = copy.deepcopy(default_configs)
         result_configs.update(test_configs)
         self.assertFalse(status)
         self.assertEqual(modified_dict, result_configs)

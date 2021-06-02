@@ -98,11 +98,13 @@ class GServerConfigs:
         @returns status, newly_produced_dict_that_matches_req:
         status indicates current_cfgs matches or not. 
         """
+        check_dict = copy.deepcopy(cls.basic_configs)
+        check_dict.update(cls.aws_configs)
         input_defensive_copy = copy.deepcopy(current_cfgs)
-        if set(cls.basic_configs.keys()).issubset(set(current_cfgs.keys())):
+        if set(check_dict.keys()).issubset(set(current_cfgs.keys())):
             return True, input_defensive_copy
 
-        new_return_dict = copy.deepcopy(cls.basic_configs)
+        new_return_dict = copy.deepcopy(check_dict)
         new_return_dict.update(input_defensive_copy)
         return False, new_return_dict
 

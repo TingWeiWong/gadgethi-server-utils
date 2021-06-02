@@ -277,7 +277,6 @@ class GadgetHiServer(HTTPServer):
 		True, don't pull it (exception). Otherwise, False.
 	@params configs: All the other configurations setting
 	@params service_handler: If using gadgethi server scheme, this is the service handler function
-	@params http_handler_cls: Init HTTP handler for HTTP Server class.
 	@params config_path: file path to server config yaml
 	@params credential_path: file path to credential yaml
 	@params custom_event_handler: If using custom server scheme, this is the handler function
@@ -287,7 +286,7 @@ class GadgetHiServer(HTTPServer):
 	"""
 	def __init__(self, table_list=[], initialize_func_list=[], desc="GadgetHi Main", 
 		yaml_exccondition=lambda :False, configs={}, service_handler=lambda: None, 
-		http_handler_cls=None, config_path="", credential_path="",custom_event_handler=None, 
+		config_path="", credential_path="",custom_event_handler=None, 
 		fetch_yaml_from_s3=True, authentication=True, **kwargs):
 
 		self.server_config = load_config(config_path)
@@ -298,7 +297,7 @@ class GadgetHiServer(HTTPServer):
 		init_log(self.server_config["log_file_path"])
 
 		self.service_handler = service_handler
-		self.http_handler = http_handler_cls
+		self.http_handler = GadgetHiHTTPHandler
 		self.desc = desc
 
 		self.host = self.server_config["server_address"]

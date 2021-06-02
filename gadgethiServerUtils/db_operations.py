@@ -10,23 +10,6 @@ import sys
 import yaml 
 from configparser import ConfigParser
 
-#-*-coding:utf-8 -*-
-#######################################################################
-## {Description}
-#######################################################################
-
-## {License_info}
-#######################################################################
-## Author: Andrew
-## Copyright: Copyright 2020, GadgetHitech
-## Credits: [{credit_list}]
-## License: {license}
-## Version: redbean-devel-v1.2.2
-## Maintainer: Andrew
-## Email: {contact_email}
-## Status: redbean-devel
-#######################################################################
-
 # global configs
 all_db_columns = {}
 all_db_columns_header_data = {}

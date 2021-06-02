@@ -1,8 +1,9 @@
 import os
 import re
 import sys
-from _configs import *
-from file_basics import *
+import copy
+from gadgethiServerUtils._configs import *
+from gadgethiServerUtils.file_basics import *
 
 # Autogenerate Configs
 # -------------------------
@@ -15,7 +16,8 @@ def generate_configs(filepath, credentials_fp="credentials.yaml"):
     This is the function to generate default 
     yaml configs and default credentials configs
     * Input
-        - filepath: 
+        - filepath: file path to the config file. 
+        - credentials_fp: file path to the credential file.
     """
     config_loc = os.path.abspath(
         os.path.join(default_gserver_location, filepath)
@@ -24,9 +26,8 @@ def generate_configs(filepath, credentials_fp="credentials.yaml"):
     credentials_loc = os.path.abspath(
         os.path.join(default_gserver_location, credentials_fp)
     )
-
-    print(config_loc)
-    print(credentials_loc)
+    
+    # This checks the config file
     if os.path.isfile(config_loc):
         print("Config file existed.. Checking configurations meet reqs..")
         # If configs file existed in directory
@@ -36,9 +37,21 @@ def generate_configs(filepath, credentials_fp="credentials.yaml"):
         if not flag:
             print("Requirements don't meet, adding defaults entries")
             write_yaml(config_loc, modified_dict)
+    else:
+        print("Config file not existed.. Generating default configuations")
+        os.makedirs(os.path.dirname(config_loc), exist_ok=True)
 
+        default_configs = copy.deepcopy(GServerConfigs.basic_configs)
+        default_configs.update(GServerConfigs.aws_configs)
+        write_yaml(config_loc, default_configs)
+
+    # This checks the credential file
     if os.path.isfile(credentials_loc):
-        print("Credentials file existed.. Initializing a blank file. ")
+        print("Credentials file existed.. Skip Initializing..")
+    else:
+        os.makedirs(os.path.dirname(credentials_loc), exist_ok=True)
+        write_yaml(credentials_loc, {})
+
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:

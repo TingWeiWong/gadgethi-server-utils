@@ -1,25 +1,9 @@
+#!/usr/bin/env python3
 from gadgethiServerUtils.db_operations import *
 import datetime
 import collections
 
 
-#!/usr/bin/env python3
-#-*-coding:utf-8 -*-
-#######################################################################
-## {Description}
-#######################################################################
-
-## {License_info}
-#######################################################################
-## Author: Andrew
-## Copyright: Copyright 2020, Gados-server
-## Credits: [{credit_list}]
-## License: {license}
-## Version: redbean-devel-v1.2.2
-## Maintainer: Andrew
-## Email: {contact_email}
-## Status: redbean-devel
-#######################################################################
 def merge_Data(selection_dict, table, multiple_vals=False,customize=False):
 	"""
 	This function reverses the split Data result given selection criterion (ex.order_id).
