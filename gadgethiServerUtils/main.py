@@ -7,12 +7,11 @@ def command_line_interface(args=None, arglist=None):
     Main catsoop command line entry point
     args, arglist are used for unit testing
     """
-    help_text = """
-    Example commands:
-        configure      : generate gserver configuration file using an interactive wizard
+    help_text = """Example commands:
+configure      : generate gserver configuration file using an interactive wizard
     """
     cmd_help = """A variety of commands are available, each with different arguments:
-        configure      : generate gserver configuration file using an interactive wizard
+configure      : generate gserver configuration file using an interactive wizard
     """
 
     parser = argparse.ArgumentParser(

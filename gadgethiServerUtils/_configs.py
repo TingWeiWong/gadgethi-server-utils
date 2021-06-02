@@ -19,7 +19,9 @@ class GServerConfigs:
         "log_file_header": "gadgethi-default-server-",
 
         "server_api_path": "yamls/server_api.yaml",
-        "allowed_ip": ["*"]
+        "allowed_ip": ["*"],
+
+        "database_name": "gadgethi-database-001"
     }
 
     doday_configs = {
@@ -31,7 +33,6 @@ class GServerConfigs:
         "opening_time": "10:00",
         "closing_time": "23:50",
 
-        "database_name": "postgres",
         "order_invoice_bucket": "doday-order-invoice",
         "order_invoice_url_header": "https://doday-order-invoice.s3-ap-southeast-1.amazonaws.com/",
         

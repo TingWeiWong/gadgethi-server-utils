@@ -1,6 +1,8 @@
 import unittest
 import threading
+from gadgethiServerUtils.file_basics import *
 from gadgethiServerUtils.GadgethiServer import *
+from gadgethiServerUtils.GadgethiClient import *
 
 class GServerTests(unittest.TestCase):
     """
@@ -16,7 +18,7 @@ class GServerTests(unittest.TestCase):
         partition on service_handler: Normal return true, normal return false, exception
         partition on config_path: file exists, file not exists
         partition on credential_path: file exists, file not exists
-        partition on custom_event_handler: Normal return true, normal return false, exception
+        partition on custom_event_handler: None, Normal return true, normal return false, exception
         partition on fetch_yaml_from_s3: True, False
         partition on authentication: True, False
 
@@ -66,5 +68,29 @@ class GServerTests(unittest.TestCase):
             print('Something went horribly wrong!', e)
             return False
 
-    # def test_00(self):
-    #   self.assertTrue(self.start_server_instance())
+    def test_00(self):
+      self.assertTrue(self.start_server_instance(table_list = [],
+        initialize_func_list=[], 
+        desc="", 
+        yaml_exccondition=lambda **kwargs: True, 
+        configs={}, 
+        service_handler=lambda: {"indicator":True, "message": "test success"}, 
+        config_path=os.path.abspath(os.path.join(default_gserver_location, "config", "config.yaml")),
+        credential_path=os.path.abspath(os.path.join(default_gserver_location, "credentials.yaml")),
+        authentication=False,
+        custom_event_handler=None, # gadgethi handler scheme
+        fetch_yaml_from_s3=False))
+
+    def test_01(self):
+      # self.assertTrue(self.start_server_instance(table_list = ["order_table", "promotion_table"],
+      #   initialize_func_list=[lambda: None], 
+      #   desc="GadgetHi Main", 
+      #   yaml_exccondition=lambda: False, 
+      #   configs={"dblock": 100}, 
+      #   service_handler=lambda: {"indicator":False, "message": "test failed"}, 
+      #   config_path=os.path.abspath(os.path.join(default_gserver_location, "config", "config.yaml")),
+      #   credential_path=os.path.abspath(os.path.join(default_gserver_location, "credentials.yaml")),
+      #   authentication=True,
+      #   custom_event_handler=None,
+      #   fetch_yaml_from_s3=False))
+        pass
