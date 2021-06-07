@@ -291,8 +291,6 @@ class GadgetHiServer(HTTPServer):
 
 		self.server_config = load_config(config_path)
 		self.credentials_config = load_config(credential_path)
-		self.server_api_path = self.server_config["server_api_path"]
-		self.server_api_dict = read_config_yaml(self.server_api_path)
 
 		init_log(self.server_config["log_file_path"])
 
@@ -322,6 +320,9 @@ class GadgetHiServer(HTTPServer):
 		if custom_event_handler:
 			GadgetHiHTTPHandler.initialize_service_redirect(custom_event_handler)
 		else:
+			# Gadgethi Server Scheme
+			self.server_api_path = self.server_config["server_api_path"]
+			self.server_api_dict = read_config_yaml(self.server_api_path)
 			GadgetHiHTTPHandler.initialize_service_redirect(self.redirectToServices)
 
 		# db operations init

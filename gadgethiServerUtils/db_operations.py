@@ -109,7 +109,7 @@ def print_psycopg2_exception(err):
 def getDb():
 	return db_name
 
-def generate_db_components(table,customize=False):
+def generate_db_components(table):
 	"""
 	This function generates the database components related to the 
 	given table.
@@ -121,10 +121,7 @@ def generate_db_components(table,customize=False):
 	"""
 	components = {}
 	components['columns'] = all_db_columns['all_' + table + '_columns']
-	if customize:
-		components['table_name'] = (table)
-	else:
-		components['table_name'] = (table + '_table')
+	components['table_name'] = (table)
 	# print ("components = ",components)
 	return components
 
@@ -662,7 +659,7 @@ def init_headers():
 		except:
 			continue
 
-		query_string = '''SELECT * FROM %s_table;''' % table_name
+		query_string = '''SELECT * FROM %s;''' % table_name
 		all_db_columns[columns] = executeSql(getDb(),query_string,None,db_operations.MODE_DB_W_RETURN_WO_ARGS,header=True)
 
 	# print ("After init headers, all_db_columns = ",all_db_columns)

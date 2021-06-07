@@ -4,7 +4,7 @@ import datetime
 import collections
 
 
-def merge_Data(selection_dict, table, multiple_vals=False,customize=False):
+def merge_Data(selection_dict, table, multiple_vals=False):
 	"""
 	This function reverses the split Data result given selection criterion (ex.order_id).
 	After reading from database, get all rows that meet the criterion and merge them back.
@@ -42,7 +42,7 @@ def merge_Data(selection_dict, table, multiple_vals=False,customize=False):
 		# This is the special case, only one where column and value is allowed
 		# Need where_columns_list = ["status"]
 		# where_value_list = [("1", "2"...)]
-		db_components = generate_db_components(table,customize)
+		db_components = generate_db_components(table)
 		
 		query = "SELECT {} FROM {} WHERE {} IN %s".format("%s" % ', '.join(map(str,db_components['columns'])), db_components['table_name'], where_columns_list[0])
 		print("query: ", query)
@@ -152,7 +152,7 @@ def split_Data(input_data, number_of_data):
 
 
 def get_data(table, where_columns_list = 'None', where_value_list = 'None', multiple=False,
-		order_by_list = 'None', special_where = False, limit_number ='None',customize=False):
+		order_by_list = 'None', special_where = False, limit_number ='None'):
 	"""
 
 	This function fetches the rows given the arguments at WHERE = %s
@@ -169,7 +169,7 @@ def get_data(table, where_columns_list = 'None', where_value_list = 'None', mult
 		(ex.[{'redbean':10,....},{....}])
 
 	"""
-	db_components = generate_db_components(table,customize)
+	db_components = generate_db_components(table)
 	# print ("db_components = ",db_components)
 	if where_value_list == 'None' or where_value_list == []:
 		return []
@@ -251,7 +251,7 @@ def separate_edit_add(splitted_list, table, where_columns_list):
 	return separted_dict
 
 
-def add_to_table(table, adding_list,customize=False):
+def add_to_table(table, adding_list):
 	"""
 	This is the common function for inserting data,
 	there will be no logic tests for checking duplicacy
@@ -263,7 +263,7 @@ def add_to_table(table, adding_list,customize=False):
 	- Return:
 		* message: indicating if the add operation has been successful
 	"""
-	db_components = generate_db_components(table,customize)
+	db_components = generate_db_components(table)
 
 	add_query = generate_query(db_components['table_name'],'INSERT',db_components['columns'])
 
@@ -280,7 +280,7 @@ def add_to_table(table, adding_list,customize=False):
 
 	return "None"
 
-def add_to_table_general(table, adding_list,customize=False):
+def add_to_table_general(table, adding_list):
 	"""
 	Assume that the key that is to be inserted might be
 	less than the total columns of the table. So, add the 
@@ -290,7 +290,7 @@ def add_to_table_general(table, adding_list,customize=False):
 	that is to be added. Although it can be less than the db
 	columns.
 	"""
-	db_components = generate_db_components(table,customize)
+	db_components = generate_db_components(table)
 
 	addlist_key = set(adding_list[0].keys())
 	db_header_columns = set(db_components['columns'])
@@ -308,7 +308,7 @@ def add_to_table_general(table, adding_list,customize=False):
 
 	return "None"
 
-def edit_on_table(table, editing_list, where_columns_list,customize=False):
+def edit_on_table(table, editing_list, where_columns_list):
 	"""
 	This function edits existing row(s)
 
@@ -325,7 +325,7 @@ def edit_on_table(table, editing_list, where_columns_list,customize=False):
 		return "None"
 
 	# print ("editing_list = ",editing_list)
-	db_components = generate_db_components(table,customize)
+	db_components = generate_db_components(table)
 
 	edit_columns = [key for key in editing_list[0] if key in db_components['columns']]
 
@@ -351,7 +351,7 @@ def edit_on_table(table, editing_list, where_columns_list,customize=False):
 	return "None"
 
 
-def delete_from_table(table, deleting_list, where_columns_list,customize=False):
+def delete_from_table(table, deleting_list, where_columns_list):
 	"""
 	This function edits existing row(s)
 
@@ -367,7 +367,7 @@ def delete_from_table(table, deleting_list, where_columns_list,customize=False):
 	if deleting_list == []:
 		return None
 
-	db_components = generate_db_components(table,customize)
+	db_components = generate_db_components(table)
 
 	delete_arguments = [extract_data(index, where_columns_list) for index in deleting_list]
 

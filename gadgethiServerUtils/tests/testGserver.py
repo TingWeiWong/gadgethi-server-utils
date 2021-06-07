@@ -63,34 +63,25 @@ class GServerTests(unittest.TestCase):
         try:
             # Start the server
             server_thread.start()
-            return True
         except Exception as e:
             print('Something went horribly wrong!', e)
-            return False
 
-    def test_00(self):
-      self.assertTrue(self.start_server_instance(table_list = [],
-        initialize_func_list=[], 
-        desc="", 
-        yaml_exccondition=lambda **kwargs: True, 
-        configs={}, 
-        service_handler=lambda: {"indicator":True, "message": "test success"}, 
-        config_path=os.path.abspath(os.path.join(default_gserver_location, "config", "config.yaml")),
-        credential_path=os.path.abspath(os.path.join(default_gserver_location, "credentials.yaml")),
-        authentication=False,
-        custom_event_handler=None, # gadgethi handler scheme
-        fetch_yaml_from_s3=False))
+    def test_start_server(self):
+        # Need visual inspection to see if there are any exceptions
+        self.start_server_instance(table_list = ["order_table", "promotion_table"],
+          initialize_func_list=[lambda: None], 
+          desc="GadgetHi Main", 
+          yaml_exccondition=lambda: False, 
+          configs={"dblock": 100}, 
+          service_handler=lambda: {"indicator":False, "message": "test failed"}, 
+          config_path=os.path.abspath(os.path.join(default_gserver_location, "config", "config.yaml")),
+          credential_path=os.path.abspath(os.path.join(default_gserver_location, "credentials.yaml")),
+          authentication=True,
+          custom_event_handler=None,
+          fetch_yaml_from_s3=False)
 
-    def test_01(self):
-      # self.assertTrue(self.start_server_instance(table_list = ["order_table", "promotion_table"],
-      #   initialize_func_list=[lambda: None], 
-      #   desc="GadgetHi Main", 
-      #   yaml_exccondition=lambda: False, 
-      #   configs={"dblock": 100}, 
-      #   service_handler=lambda: {"indicator":False, "message": "test failed"}, 
-      #   config_path=os.path.abspath(os.path.join(default_gserver_location, "config", "config.yaml")),
-      #   credential_path=os.path.abspath(os.path.join(default_gserver_location, "credentials.yaml")),
-      #   authentication=True,
-      #   custom_event_handler=None,
-      #   fetch_yaml_from_s3=False))
+    def test_http_authentication_header(self):
         pass
+
+        
+
