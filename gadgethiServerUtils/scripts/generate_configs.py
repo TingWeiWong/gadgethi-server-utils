@@ -42,9 +42,6 @@ def generate_configs(filepath, credentials_fp="credentials.yaml",
     config_loc = os.path.abspath(
         os.path.join(default_gserver_location, filepath)
     )
-    print(default_gserver_location)
-    print(filepath)
-    print(config_loc)
 
     credentials_loc = os.path.abspath(
         os.path.join(default_gserver_location, credentials_fp)

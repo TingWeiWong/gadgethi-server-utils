@@ -5,9 +5,7 @@ import yaml
 import datetime
 import logging
 
-default_gserver_location = os.environ.get(
-    "XDG_CONFIG_HOME", os.path.expanduser(os.path.join("~", ".gserver"))
-)
+default_gserver_location = os.path.expanduser(os.path.join("~", ".gserver"))
 
 # Main API function
 # -------------------------
