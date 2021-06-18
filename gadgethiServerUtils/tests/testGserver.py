@@ -97,7 +97,7 @@ class GServerTests(unittest.TestCase):
           yaml_exccondition=lambda: False, 
           configs={"dblock": 100}, 
           service_handler=None, 
-          config_path=os.path.abspath(os.path.join(default_gserver_location, "config", "config.yaml")),
+          config_path=os.path.abspath(os.path.join(default_gserver_location, "config/config.yaml")),
           credential_path=os.path.abspath(os.path.join(default_gserver_location, "credentials.yaml")),
           authentication=True,
           custom_event_handler=lambda self, d, **kwargs: {"indicator":True, "message": "test success"},
