@@ -70,6 +70,13 @@ jobs:
         python3 main.py configure config/config.yaml
         mkdir ~/.gserver
         mkdir -p /opt/doday/LOG_FILES/
+    - name: Cat default configs
+      run: |
+        cd ~/.gserver
+        pwd
+        cat config/config.yaml
+        cat credentials.yaml
+        cat database.ini
     - name: Run tests and coverage report
       run: |
         tox -e ${{ matrix.python }}
