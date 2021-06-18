@@ -28,6 +28,7 @@ configure      : generate gserver configuration file using an interactive wizard
 
     if args.command == "configure":
         from scripts.generate_configs import generate_configs
+        print(args)
 
         # make sure the arguments meet the regex
         yaml_regex = "^.+\.yaml$"

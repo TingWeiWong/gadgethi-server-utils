@@ -42,6 +42,9 @@ def generate_configs(filepath, credentials_fp="credentials.yaml",
     config_loc = os.path.abspath(
         os.path.join(default_gserver_location, filepath)
     )
+    print(default_gserver_location)
+    print(filepath)
+    print(config_loc)
 
     credentials_loc = os.path.abspath(
         os.path.join(default_gserver_location, credentials_fp)
@@ -67,7 +70,6 @@ def generate_configs(filepath, credentials_fp="credentials.yaml",
 
         default_configs = copy.deepcopy(GServerConfigs.basic_configs)
         default_configs.update(GServerConfigs.aws_configs)
-        print(config_loc)
         print(write_yaml(config_loc, default_configs))
 
     # This checks the credential file
