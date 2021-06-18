@@ -1,8 +1,31 @@
+import json
 import unittest
 import threading
 from gadgethiServerUtils.file_basics import *
 from gadgethiServerUtils.GadgethiServer import *
 from gadgethiServerUtils.GadgethiClient import *
+
+def _initialize_order():
+    """
+    Init the database and create table.
+    order_table -> log table
+    """
+    # , receipt text, taxID text, print_flag text, xml_flag text, RandomNumber text, staytime int, age text, gender text, ordertime int, payment_method text,
+    # , isdelivery text, sales_item text, waittime int, buyer_address text, buyer_PersonInCharge text, buyer_TelephoneNumber text, buyer_FacsimileNumber text, buyer_EmailAddress text, buyer_CustomerNumber text, buyer_RoleRemark text, CheckNumber text, BuyerRemark text, MainRemark text, CustomsClearanceMark text, Category text, RelateNumber text, InvoiceType text, GroupMark text, DonateMark text, CarrierType text, CarrierId1 text, CarrierId2 text, PrintMark text,
+    init_order = '''CREATE TABLE IF NOT EXISTS public.order_table (_id SERIAL PRIMARY KEY , 
+    order_id text, order_no text, store_id text, serial_number text, username text, name1 text,
+    name2 text, name3with4 text, stayortogo text, name5 text, amount int, price text, discount int, final_price int, total_price int, 
+    payment_method text, receipt_number text, status text, promotion text,
+    promotion_key text, order_time int, print_flag text, xml_flag text,
+    comment1 text, comment2 text, comment3 text, comment4 text, comment5 text, 
+    comment6 text, comment7 text, comment8 text, time int);'''
+    executeSql(getDb(), init_order, None, db_operations.MODE_DB_NORMAL)
+
+def _initialize_promotion():
+
+    init_promotion = '''CREATE TABLE IF NOT EXISTS public.promotion_table (_id SERIAL PRIMARY KEY , 
+    specific_promotion_key text, usage_amount int,promotion_key text, time int);'''
+    executeSql(getDb(), init_promotion, None, db_operations.MODE_DB_NORMAL)
 
 class GServerTests(unittest.TestCase):
     """
@@ -66,22 +89,32 @@ class GServerTests(unittest.TestCase):
         except Exception as e:
             print('Something went horribly wrong!', e)
 
-    def test_start_server(self):
+    def test_async_start_server(self):
         # Need visual inspection to see if there are any exceptions
         self.start_server_instance(table_list = ["order_table", "promotion_table"],
-          initialize_func_list=[lambda: None], 
+          initialize_func_list=[_initialize_order, _initialize_promotion], 
           desc="GadgetHi Main", 
           yaml_exccondition=lambda: False, 
           configs={"dblock": 100}, 
-          service_handler=lambda: {"indicator":False, "message": "test failed"}, 
+          service_handler=None, 
           config_path=os.path.abspath(os.path.join(default_gserver_location, "config", "config.yaml")),
           credential_path=os.path.abspath(os.path.join(default_gserver_location, "credentials.yaml")),
           authentication=True,
-          custom_event_handler=None,
+          custom_event_handler=lambda self, d, **kwargs: {"indicator":True, "message": "test success"},
           fetch_yaml_from_s3=False)
 
     def test_http_authentication_header(self):
-        pass
+        client = GadgetHiClient(test_http_url="http://127.0.0.1:5050")
+
+        self.assertTrue(json.loads(client.client_post("test_http_url", {"service": "order"}, gauth=True))["indicator"])
+        self.assertTrue(json.loads(client.client_post("test_http_url", {"service": "order"}, gauth=True, urlencode=True))["indicator"])
+        self.assertTrue(json.loads(client.client_post("test_http_url", {"service": "order"}, gauth=True, urlencode=True, 
+            custom_headers={"custom_headers": "YAS!"}))["indicator"])
+
+        self.assertTrue(json.loads(client.client_get("test_http_url", {"service": "order"}, gauth=True))["indicator"])
+        self.assertTrue(json.loads(client.client_get("test_http_url", {"service": "order"}, gauth=True))["indicator"])
+        self.assertTrue(json.loads(client.client_get("test_http_url", {"service": "order"}, gauth=True, 
+            custom_headers={"custom_headers": "YAS!"}))["indicator"])
 
         
 

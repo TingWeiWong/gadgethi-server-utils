@@ -1,4 +1,6 @@
+import os
 import requests
+from gadgethiServerUtils.file_basics import *
 from gadgethiServerUtils.authentication import *
 from gadgethiServerUtils.time_basics import timeout
 
@@ -8,17 +10,16 @@ HTTP requests. Including gadgethi
 authentication function. 
 """
 class GadgetHiClient:
-    """
-    TODO:
-        extend functionalities of adding
-        external headers. 
-    """
-    def __init__(self, **configs):
+    
+    def __init__(self, custom_credentials_loc=os.path.abspath(os.path.join(default_gserver_location, "credentials.yaml")), 
+        **configs):
         """
         @kwargs: if _http_url in kwargs, 
             get that key and set it to the
             attribute. 
         """
+        self.credentials = read_config_yaml(custom_credentials_loc)
+
         for key in configs:
             if "_http_url" in key:
                 setattr(self, key, configs[key])
@@ -27,7 +28,7 @@ class GadgetHiClient:
         return getattr(self, key)
     
     @timeout(5)
-    def client_get(self, key, input_dict, gauth=False, **configs):
+    def client_get(self, key, input_dict, gauth=False, custom_headers={}):
         """
         This is the main function to send out HTTP GET. 
         @params key: the key of the url stored in the ADT
@@ -35,6 +36,7 @@ class GadgetHiClient:
             going to send
         @params gauth: whether we should enable gadgethi authentication, 
             adding auth headers to the HTTP packets
+        @params custom_headers: custom headers to send, default empty. 
         """
         get_query = self[key]
 
@@ -48,16 +50,19 @@ class GadgetHiClient:
 
         if gauth:
             # authentication
-            a = GadgethiHMAC256Encryption(configs['gadgethi_key'],configs['gadgethi_secret'])
-            headers = a.getGServerAuthHeaders()
+            a = GadgethiHMAC256Encryption(self.credentials['gadgethi_key'],self.credentials['gadgethi_secret'])
+            auth_header = a.getGServerAuthHeaders()
+            headers = custom_headers
+            headers.update(auth_header)
             r = requests.get(get_query,headers=headers)
         else:
-            r = requests.get(get_query)
+            r = requests.get(get_query,headers=custom_headers)
         response = r.text 
         return response
 
     @timeout(5)
-    def client_post(self, key, input_dict,gauth=False,urlencode=False, **configs):
+    def client_post(self, key, input_dict,gauth=False,urlencode=False, 
+        custom_headers={}):
         """
         This is the main function to send out HTTP POST. 
         @params key: the key of the url stored in the ADT
@@ -67,13 +72,16 @@ class GadgetHiClient:
             adding auth headers to the HTTP packets
         @params urlencode: This defines the application type of the POST content. 
             If True -> www-urlencode, default False -> json
+        @params custom_headers: custom headers to send, default empty. 
         """
         post_query = self[key]
 
         if gauth:
             # authentication
-            a = GadgethiHMAC256Encryption(configs['gadgethi_key'],configs['gadgethi_secret'])
-            headers = a.getGServerAuthHeaders()
+            a = GadgethiHMAC256Encryption(self.credentials['gadgethi_key'],self.credentials['gadgethi_secret'])
+            auth_header = a.getGServerAuthHeaders()
+            headers = custom_headers
+            headers.update(auth_header)
 
             if urlencode:
                 r = requests.post(post_query, data=input_dict,headers=headers)
@@ -83,9 +91,9 @@ class GadgetHiClient:
         else:
 
             if urlencode:
-                r = requests.post(post_query, data=input_dict)
+                r = requests.post(post_query, data=input_dict,headers=custom_headers)
             else:
-                r = requests.post(post_query, json=input_dict)
+                r = requests.post(post_query, json=input_dict,headers=custom_headers)
             response = r.text
 
         return response

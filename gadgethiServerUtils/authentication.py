@@ -56,10 +56,11 @@ class GadgethiHMAC256Encryption():
         This is the function to obtain the
         gServer Authentication header fields
         """
+        current_time = serverTime()
         auth_dict = {}
         auth_dict['Gadgethi-Key'] = self.key
-        auth_dict['Hmac256-Result'] = self.hmac256_encryption(self.key+str(serverTime()))
-        auth_dict['time'] = str(serverTime())
+        auth_dict['Hmac256-Result'] = self.hmac256_encryption(self.key+str(current_time))
+        auth_dict['time'] = str(current_time)
         return auth_dict
 
 """
