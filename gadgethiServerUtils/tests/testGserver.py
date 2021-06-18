@@ -69,28 +69,9 @@ class GServerTests(unittest.TestCase):
         partition on urlencode: True, False
 
     """
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
-    def start_server_instance(self, **kwargs):
-        """Run the actual threading test."""
-        def start_and_init_server(kwargs):
-            """A helper function to start out server in a thread.
-            This could be done as a lambda function, but this way we can
-            perform other setup functions if necessary.
-            Args:
-                kwargs: all necessary kwargs for gadgethi server
-            """
-            GadgetHiServer(**kwargs).run()
-
-        self.server_thread = threading.Thread(target=start_and_init_server, args=(kwargs, ))
-        
-        try:
-            # Start the server
-            self.server_thread.start()
-        except Exception as e:
-            print('Something went horribly wrong!', e)
-
-    def test_async_start_server(self):
-        # Need visual inspection to see if there are any exceptions
         self.start_server_instance(table_list = ["order_table", "promotion_table"],
           initialize_func_list=[_initialize_order, _initialize_promotion], 
           desc="GadgetHi Main", 
@@ -102,6 +83,38 @@ class GServerTests(unittest.TestCase):
           authentication=True,
           custom_event_handler=lambda self, d, **kwargs: {"indicator":True, "message": "test success"},
           fetch_yaml_from_s3=False)
+
+    def start_server_instance(self, **kwargs):
+        """
+        Run the actual threading test.
+        Args:
+            kwargs: all necessary kwargs for gadgethi server
+        """
+        server = GadgetHiServer(**kwargs)
+
+        def start_and_init_server():
+            """A helper function to start out server in a thread.
+            This could be done as a lambda function, but this way we can
+            perform other setup functions if necessary.
+            """
+            # Context manager to get rid of the unclosed warning
+            with server as test_server:
+                test_server.run()
+
+        def shutdown_server():
+            """
+            function to shutdown the server. 
+            """
+            server.shutdown()
+
+        self.server_thread = threading.Thread(target=start_and_init_server)
+        self.shutdown_function = shutdown_server
+
+        try:
+            # Start the server
+            self.server_thread.start()
+        except Exception as e:
+            print('Something went horribly wrong!', e)
 
     def test_http_authentication_header(self):
         client = GadgetHiClient(test_http_url="http://127.0.0.1:5050")
@@ -116,8 +129,5 @@ class GServerTests(unittest.TestCase):
         self.assertTrue(json.loads(client.client_get("test_http_url", {"service": "order"}, gauth=True, 
             custom_headers={"custom_headers": "YAS!"}))["indicator"])
 
-    
-    def test_zzz_sleep_thread(self):
-        self.server_thread.stop()
-        
+        self.shutdown_function()
 
