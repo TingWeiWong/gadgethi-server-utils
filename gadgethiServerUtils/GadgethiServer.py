@@ -288,6 +288,11 @@ class GadgetHiServer(HTTPServer):
 		config_path="", credential_path="",custom_event_handler=None, 
 		fetch_yaml_from_s3=True, authentication=True, **kwargs):
 
+		print("******************")
+		print("CONFIGGGGGGS")
+		print("******************")
+		print(config_path)
+		print()
 		self.server_config = load_config(config_path)
 		self.credentials_config = load_config(credential_path)
 
