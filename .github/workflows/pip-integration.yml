@@ -68,6 +68,7 @@ jobs:
       run: |
         cd gadgethiServerUtils
         python3 main.py configure config/config.yaml
+        mkdir -p /opt/doday/LOG_FILES/
     - name: Run tests and coverage report
       run: |
         tox -e ${{ matrix.python }}
