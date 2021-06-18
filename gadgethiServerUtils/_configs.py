@@ -40,7 +40,7 @@ class GServerConfigs:
         "special_hours":
         [{
             "type": "by-days",
-            "arg": [7, [1, 3]], # [days (monday =1, sunday = 7), index of that day of the month, 
+            "arg": [1, []], # [days (monday =1, sunday = 7), index of that day of the month, 
             # e.g. 1st and 3rd monday]
             "hours": {
               "opening_time": "11:30",
@@ -51,7 +51,7 @@ class GServerConfigs:
           # by dates have higher priority so need to be later in the list
           {
             "type": "by-dates",
-            "arg": [16, 17, 18, 19, 20], # [1st of that month]
+            "arg": [], # [1st of that month]
             "hours": {
               "opening_time": "XX", # write "XX" if not in business that day
               "closing_time": "XX"
@@ -65,6 +65,11 @@ class GServerConfigs:
         "yaml_local_folder": "yamls/",
         "s3_database_ini_path": "database_ini/database.ini",
         "local_database_ini_path": "/Users/weitung/.gserver/database.ini"
+    }
+
+    credential_configs = {
+        "gadgethi_key": "test",
+        "gadgethi_secret": "SECRET"
     }
 
     def __init__(self, doday_flag=False, aws_flag=True):

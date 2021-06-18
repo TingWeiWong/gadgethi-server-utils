@@ -73,7 +73,7 @@ def generate_configs(filepath, credentials_fp="credentials.yaml",
     if not os.path.isfile(credentials_loc):
         print("Credentials file not exist.. Initializing Defaults..")
         os.makedirs(os.path.dirname(credentials_loc), exist_ok=True)
-        write_yaml(credentials_loc, {})
+        write_yaml(credentials_loc, GServerConfigs.credential_configs)
 
     # This checks database ini
     if not os.path.isfile(databaseini_loc):

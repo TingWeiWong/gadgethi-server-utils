@@ -18,7 +18,9 @@ class GadgetHiClient:
             get that key and set it to the
             attribute. 
         """
+        print("Client Credentials Path: " +custom_credentials_loc)
         self.credentials = read_config_yaml(custom_credentials_loc)
+        print("Client Credentials: "+str(self.credentials))
 
         for key in configs:
             if "_http_url" in key:
