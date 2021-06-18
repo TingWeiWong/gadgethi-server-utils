@@ -68,7 +68,9 @@ jobs:
       run: |
         cd gadgethiServerUtils
         python3 main.py configure config/config.yaml
-        mkdir ~/.gserver
+        cat ~/.gserver/config/config.yaml
+        pwd
+        cat ~/.gserver/credentials.yaml
         mkdir -p /opt/doday/LOG_FILES/
         cd ..
         tox -e ${{ matrix.python }}
