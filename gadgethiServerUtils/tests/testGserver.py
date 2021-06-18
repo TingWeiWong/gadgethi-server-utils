@@ -81,11 +81,11 @@ class GServerTests(unittest.TestCase):
             """
             GadgetHiServer(**kwargs).run()
 
-        server_thread = threading.Thread(target=start_and_init_server, args=(kwargs, ))
+        self.server_thread = threading.Thread(target=start_and_init_server, args=(kwargs, ))
         
         try:
             # Start the server
-            server_thread.start()
+            self.server_thread.start()
         except Exception as e:
             print('Something went horribly wrong!', e)
 
@@ -116,5 +116,8 @@ class GServerTests(unittest.TestCase):
         self.assertTrue(json.loads(client.client_get("test_http_url", {"service": "order"}, gauth=True, 
             custom_headers={"custom_headers": "YAS!"}))["indicator"])
 
+    
+    def test_zzz_sleep_thread(self):
+        self.server_thread.stop()
         
 
