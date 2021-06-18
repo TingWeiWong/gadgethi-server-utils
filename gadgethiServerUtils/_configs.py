@@ -64,7 +64,7 @@ class GServerConfigs:
         "yaml_s3_folder": "doday_yamls/",
         "yaml_local_folder": "yamls/",
         "s3_database_ini_path": "database_ini/database.ini",
-        "local_database_ini_path": "/Users/weitung/.gserver/database.ini"
+        "local_database_ini_path": "~/.gserver/database.ini"
     }
 
     credential_configs = {
