@@ -67,6 +67,7 @@ def generate_configs(filepath, credentials_fp="credentials.yaml",
 
         default_configs = copy.deepcopy(GServerConfigs.basic_configs)
         default_configs.update(GServerConfigs.aws_configs)
+        print(config_loc)
         print(write_yaml(config_loc, default_configs))
 
     # This checks the credential file
