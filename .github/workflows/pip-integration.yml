@@ -82,10 +82,10 @@ jobs:
       with:
         name: code-coverage-report
         path: htmlcov
-#     - name: Build and publish
-#       env:
-#         TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
-#         TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
-#       run: |
-#         python setup.py sdist bdist_wheel
-#         twine upload dist/*
+    - name: Build and publish
+      env:
+        TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
+        TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+      run: |
+        python setup.py sdist bdist_wheel
+        twine upload dist/*
