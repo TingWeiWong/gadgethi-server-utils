@@ -25,13 +25,13 @@ setuptools.setup(
     package_dir={"gadgethiServerUtils": "gadgethiServerUtils"},
     test_suite="gadgethiServerUtils.tests",
     classifiers=[
-        "Intended Audience :: GadgetHi Developers",
+        "Intended Audience :: Developers",
         "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
         "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Operating System :: OS Independent",
-        "Topic :: PostgreSQL",
+        "Topic :: Software Development :: Libraries ",
     ],
     python_requires='>=3.5',
 )
