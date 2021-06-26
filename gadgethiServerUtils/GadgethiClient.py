@@ -97,3 +97,21 @@ class GadgetHiClient:
             response = r.text
 
         return response
+
+    @timeout(5)
+    def client_put(self, key, input_dict, custom_headers={}):
+        """
+        This is the main function to send out HTTP PUT. 
+        @params key: the key of the url stored in the ADT
+        @params input_dict: the input dictionary of the data that is 
+            going to send
+        @params gauth: whether we should enable gadgethi authentication, 
+            adding auth headers to the HTTP packets
+        @params custom_headers: custom headers to send, default empty. 
+        """
+        put_query = self[key]
+
+        r = requests.put(put_query, data=input_dict,headers=custom_headers)
+        response = r.text
+        return response
+
