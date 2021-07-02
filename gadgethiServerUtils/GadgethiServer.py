@@ -291,7 +291,7 @@ class GadgetHiServer(HTTPServer):
 		self.server_config = load_config(config_path)
 		self.credentials_config = load_config(credential_path)
 
-		init_log(self.server_config["log_file_path"])
+		init_log(self.server_config["log_file_path"]+self.server_config["program_header"])
 
 		self.service_handler = service_handler
 		self.http_handler = GadgetHiHTTPHandler
