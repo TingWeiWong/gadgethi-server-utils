@@ -371,7 +371,7 @@ class GadgetHiServer(HTTPServer):
 		print("Pulling Yamls....")
 		for obj in objects:
 			obj_name = obj["Key"].replace(s3_folder_header, "")
-			if exceptcond(obj_name=obj_name):
+			if exceptcond(obj_name=obj_name, **yaml_config):
 				continue
 			print(obj_name)
 			s3.download_file(bucket_name, s3_folder_header+obj_name, local_folder_header+obj_name)
