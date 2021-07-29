@@ -12,7 +12,7 @@ authentication function.
 class GadgetHiClient:
     
     def __init__(self, custom_credentials_loc=os.path.abspath(os.path.join(default_gserver_location, "credentials.yaml")), 
-        **configs):
+        http_timeout=None, **configs):
         """
         @kwargs: if _http_url in kwargs, 
             get that key and set it to the
@@ -112,6 +112,19 @@ class GadgetHiClient:
         put_query = self[key]
 
         r = requests.put(put_query, data=input_dict,headers=custom_headers)
+        response = r.text
+        return response
+
+    def client_post_without_timeout(self, key, input_dict):
+        """
+        This is the auxiliary function to send out http post
+        without a timeout declaration. It is usually for local
+        development and no authentication is needed. 
+        Not recommended for production or public facing
+        applications. 
+        """
+        post_query = self[key]
+        r = requests.post(post_query, data=input_dict)
         response = r.text
         return response
 
