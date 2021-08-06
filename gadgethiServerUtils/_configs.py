@@ -16,7 +16,7 @@ class GServerConfigs:
         "server_port": "5050",
 
         "log_file_path": "/opt/doday/LOG_FILES/",
-        "log_file_header": "gadgethi-default-server-",
+        "program_header": "gadgethi-default-server-",
 
         "server_api_path": "yamls/server_api.yaml",
         "allowed_ip": ["*"],
