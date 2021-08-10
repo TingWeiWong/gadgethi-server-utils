@@ -39,11 +39,12 @@ class GadgetHiAWSHandler:
 		input_dictionary["form"] = {}
 
 		body = event["body"]
-		content_type = event["headers"]['Content-Type'] if 'Content-Type' in event["headers"] else None
+		headers = self.header_helper(event["headers"])
+		content_type = headers['content-type'] if 'content-type' in headers else None
 
 		if self.authentication:
 			# Get authentication information
-			auth_flag, auth_msg = self.authentication_helper(event["headers"])
+			auth_flag, auth_msg = self.authentication_helper(headers)
 		else:
 			auth_flag = True
 
@@ -99,6 +100,16 @@ class GadgetHiAWSHandler:
 
 	# Helper Functions
 	# -------------------------
+	def header_helper(self, headers):
+		"""
+		This is the helper function to return the
+		lowercase headers.
+		"""
+		header_dict = {}
+		for key in headers:
+			header_dict[key.lower()] = headers[key]
+		return header_dict
+
 	def authentication_helper(self, headers):
 		"""
 		This is the helper function to check whether the
@@ -109,10 +120,10 @@ class GadgetHiAWSHandler:
 			* (Indicator, Message)
 		"""
 		#This part handles the authentication for gadgethi
-		auth = GadgethiHMAC256Verification(headers['Hmac256-Result'])
-		c = auth.gserver_authentication(str(headers['Gadgethi-Key'])+str(headers['time']), float(headers['time']), self.configs["gadgethi_secret"])
+		auth = GadgethiHMAC256Verification(headers['hmac256-result'])
+		c = auth.gserver_authentication(str(headers['gadgethi-key'])+str(headers['time']), float(headers['time']), self.configs["gadgethi_secret"])
 		if c['indicator']:
-			logging.info("authentication pass"+headers['Gadgethi-Key']+headers['Hmac256-Result']+headers['time'])
+			logging.info("authentication pass"+headers['gadgethi-key']+headers['hmac256-result']+headers['time'])
 		else:
 			logging.error("authentication fail: "+str(headers))
 
