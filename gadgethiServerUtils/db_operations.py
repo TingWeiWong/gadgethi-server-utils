@@ -421,8 +421,6 @@ def executeSql(db_path, sql, entries, mode, debug_print=False, header=False):
 				print(tabulate(ret, headers, tablefmt="fancy_grid"))
 
 		elif mode == db_operations.MODE_DB_W_RETURN_AND_ARGS:
-			print("sql in db_operations.MODE_DB_W_RETURN_AND_ARGS = ", sql)
-			print("entries in db_operations.MODE_DB_W_RETURN_AND_ARGS = ", entries)
 			c.execute(sql, entries)
 			ret = c.fetchall()
 			# ret = c.execute(sql, entries).fetchall()
