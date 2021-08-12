@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 from gadgethiServerUtils.db_operations import *
-import datetime
 import collections
-
 
 def merge_Data(selection_dict, table, multiple_vals=False):
 	"""
@@ -392,14 +390,6 @@ def delete_inventory(delete_data):
 	executeSql(getDb(), delete_entry, (material), db_operations.MODE_DB_W_ARGS)
 	message = "Material {} deleted on inventory table".format(material)	
 	return {"indicator":True, "message": message}
-
-def get_current_time(mode = 'int'):
-	"""
-	Current time epoch, with mode = int 
-	"""
-
-	if mode == 'int':
-		return int(datetime.datetime.now().timestamp())
 
 
 def mass_dictionary(key_list):

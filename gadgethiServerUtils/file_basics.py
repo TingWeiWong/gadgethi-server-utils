@@ -2,8 +2,8 @@
 import os 
 import ast 
 import yaml
-import datetime
 import logging
+from gadgethiServerUtils.time_basics import *
 
 default_gserver_location = os.path.expanduser(os.path.join("~", ".gserver"))
 
@@ -139,7 +139,7 @@ def init_log(log_parent_directory):
 		or logging.error(msg) to put different levels of faults
 	"""
 	try:
-		LOG_FILE_PATH = log_parent_directory + str(datetime.datetime.now().strftime("%Y-%m-%d_%H-%M")) + ".txt"
+		LOG_FILE_PATH = log_parent_directory + serverTime(TimeMode.STRING) + ".txt"
 	except:
 		raise Exception("Cannot create log file path")
 

@@ -2,11 +2,17 @@ import datetime
 import time
 import logging
 import re
+import os
 from enum import Enum
 
 # For timeout function
 # ------------------------------
 import concurrent.futures as futures
+
+# timezone_str should be a integer number range from -24 to 24, 
+# this is the offset from UTC. TODO: CAVEAT: Be careful of the daylight saving
+timezone_str = os.environ.get('SERVER_TIMEZONE', '8') #Defaults to UTC +8
+timez = datetime.timezone(datetime.timedelta(hours=int(timezone_str)))
 
 class TimeMode(Enum):
     EPOCH = 1
@@ -23,7 +29,7 @@ def serverTime(mode=TimeMode.EPOCH):
             not specified -> epoch time will be returned
     * Returns a datetime object
     """
-    server_time = datetime.datetime.now()
+    server_time = datetime.datetime.now(tz=timez)
     
     if mode == TimeMode.EPOCH:
         return server_time.timestamp()
@@ -67,7 +73,7 @@ def check_operation_hours(**kwargs):
 
     start_time = datetime.time(opening_hour,opening_minute)
     end_time = datetime.time(closing_hour,closing_minute)
-    current_time = datetime.datetime.now().time()
+    current_time = serverTime(TimeMode.DATETIME_NOW).time()
 
     return is_time_between(start_time, end_time, current_time)
 

@@ -8,7 +8,6 @@ from gadgethiServerUtils.db_operations import *
 from gadgethiServerUtils.authentication import *
 from gadgethiServerUtils.file_basics import *
 
-import datetime
 import os
 import json
 import sys
