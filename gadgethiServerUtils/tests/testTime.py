@@ -44,7 +44,7 @@ class TimeTests(unittest.TestCase):
             "closing_time": "12:10"
         }
         self.assertEqual(check_operation_hours(**args_dict), \
-            datetime.datetime.now().time() >= datetime.time(10, 10) and datetime.datetime.now().time() <= datetime.time(12, 10))
+            datetime.datetime.now(tz=timez).time() >= datetime.time(10, 10) and datetime.datetime.now(tz=timez).time() <= datetime.time(12, 10))
 
         args_dict = {
             "opening_time": "XX",
@@ -57,14 +57,14 @@ class TimeTests(unittest.TestCase):
             "closing_time": "08:10"
         }
         self.assertEqual(check_operation_hours(**args_dict), \
-            datetime.datetime.now().time() >= datetime.time(19, 10) or datetime.datetime.now().time() <= datetime.time(8, 10))
+            datetime.datetime.now(tz=timez).time() >= datetime.time(19, 10) or datetime.datetime.now(tz=timez).time() <= datetime.time(8, 10))
 
         args_dict = {
             "opening_time": "10:10",
             "closing_time": "10:10"
         }
         self.assertEqual(check_operation_hours(**args_dict), \
-            datetime.datetime.now().time() >= datetime.time(10, 10) and datetime.datetime.now().time() <= datetime.time(10, 10))
+            datetime.datetime.now(tz=timez).time() >= datetime.time(10, 10) and datetime.datetime.now(tz=timez).time() <= datetime.time(10, 10))
 
     # covers all timeout
     def test_timeout(self):
