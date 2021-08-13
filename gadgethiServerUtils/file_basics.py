@@ -239,10 +239,10 @@ def fetch_from_s3(bucket, files, tolocation, **configs):
 		if "*" == files[fileid][-1]:
 			s3_folder_header = files[fileid][:-1]
 			local_folder_header = tolocation[fileid][:-1]
-			objects = s3.list_objects(Bucket=bucket_name, Prefix=s3_folder_header)["Contents"]
+			objects = s3.list_objects(Bucket=bucket, Prefix=s3_folder_header)["Contents"]
 			for obj in objects:
 				obj_name = obj["Key"].replace(s3_folder_header, "")
 				logging.info(obj_name)
-				s3.download_file(bucket_name, s3_folder_header+obj_name, local_folder_header+obj_name)
+				s3.download_file(bucket, s3_folder_header+obj_name, local_folder_header+obj_name)
 		else:
-			s3.download_file(bucket_name, files[fileid], tolocation[fileid])
+			s3.download_file(bucket, files[fileid], tolocation[fileid])

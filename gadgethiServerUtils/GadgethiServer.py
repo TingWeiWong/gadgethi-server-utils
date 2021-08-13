@@ -313,12 +313,6 @@ class GadgetHiServer(HTTPServer):
 		yaml_config.update(self.server_config)
 		yaml_config.update(self.credentials_config)
 
-		bucket_name = yaml_config.get("s3_bucket_name", None)
-		fetch_s3_files = yaml_config.get("fetch_s3_files", [])
-		local_s3_locations = yaml_config.get("local_s3_locations", [])
-		if bucket_name:
-			fetch_from_s3(bucket_name, fetch_s3_files, local_s3_locations, **yaml_config)
-
 		GadgetHiHTTPHandler.initialize_configs(yaml_config)
 		
 		if custom_event_handler:
