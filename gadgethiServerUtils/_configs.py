@@ -21,7 +21,8 @@ class GServerConfigs:
         "server_api_path": "yamls/server_api.yaml",
         "allowed_ip": ["*"],
 
-        "database_name": "gadgethi-database-001"
+        "database_name": "gadgethi-database-001",
+        "local_database_ini_path": "~/.gserver/database.ini"
     }
 
     doday_configs = {
