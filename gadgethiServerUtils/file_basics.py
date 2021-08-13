@@ -2,6 +2,7 @@
 import os 
 import ast 
 import yaml
+import boto3
 import logging
 from gadgethiServerUtils.time_basics import *
 
@@ -144,7 +145,27 @@ def init_log(log_parent_directory):
 		raise Exception("Cannot create log file path")
 
 	# level implies that the logger will write all messages greater than level = INFO
-	logging.basicConfig(filename=LOG_FILE_PATH, level=logging.INFO)
+	logging.basicConfig(filename=LOG_FILE_PATH, 
+						level=logging.INFO, 
+						format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
+                    	datefmt='%m-%d %H:%M',
+                    	filemode='w'
+						)
+
+	# define a Handler which writes INFO messages or higher to the sys.stderr
+	console = logging.StreamHandler()
+	console.setLevel(logging.INFO)
+	# set a format which is simpler for console use
+	formatter = logging.Formatter('%(name)-12s: %(levelname)-8s %(message)s')
+	# tell the handler to use this format
+	console.setFormatter(formatter)
+	# add the handler to the root logger
+	logging.getLogger().addHandler(console)
+
+	# CAN USE THE FOLLOWING TO DEFINE LOGGERS IN DIFFERENT REGIONS, defined in
+	# different files. 
+	# logger1 = logging.getLogger('myapp.area1')
+	# logger2 = logging.getLogger('myapp.area2')
 
 # Helper functions
 # -------------------------
@@ -185,3 +206,43 @@ def check_file_exists(parent_directory, file_name):
 	abs_path = get_file_path(parent_directory, file_name)
 
 	return os.path.exists(abs_path)	
+
+
+# File Handling from S3
+# ----------------------------
+def fetch_from_s3(bucket, files, tolocation, **configs):
+	"""
+	This is the helper function to fetch files from s3.
+	If you want to fetch all files from a directory 
+
+	- Input:
+		* bucket: name of the s3 bucket
+		* files: a list of filenames on s3 bucket. It supports
+			single file or multiple files.
+			e.g. ["database_ini/database.ini", "doday_yamls/*"]
+		* tolocation: the local folder that we 
+			want to put the fetched files in.
+			e.g. ["util/database.ini", "yamls/*"]
+	"""
+	assert isinstance(files, list) and isinstance(tolocation, list)
+	assert len(files) == len(tolocation)
+
+	# connect to s3
+	ACCESS_ID = configs.get("aws_access_key_id", None)
+	SECRET_KEY = configs.get("aws_secret_access_key", None)
+	s3 = boto3.client('s3', aws_access_key_id=ACCESS_ID, aws_secret_access_key=SECRET_KEY)
+
+	logging.info("Pulling Files From S3....")
+
+	for fileid in range(len(files)):
+		# wild card for all files in single folder
+		if "*" == files[fileid][-1]:
+			s3_folder_header = files[fileid][:-1]
+			local_folder_header = tolocation[fileid][:-1]
+			objects = s3.list_objects(Bucket=bucket_name, Prefix=s3_folder_header)["Contents"]
+			for obj in objects:
+				obj_name = obj["Key"].replace(s3_folder_header, "")
+				logging.info(obj_name)
+				s3.download_file(bucket_name, s3_folder_header+obj_name, local_folder_header+obj_name)
+		else:
+			s3.download_file(bucket_name, files[fileid], tolocation[fileid])

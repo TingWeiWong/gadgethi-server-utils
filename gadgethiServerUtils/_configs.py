@@ -60,11 +60,9 @@ class GServerConfigs:
     }
 
     aws_configs = {
-        "yaml_s3_bucket": "gadgethi-bucket001",
-        "yaml_s3_folder": "doday_yamls/",
-        "yaml_local_folder": "yamls/",
-        "s3_database_ini_path": "database_ini/database.ini",
-        "local_database_ini_path": "~/.gserver/database.ini"
+        "s3_bucket_name": "gadgethi-bucket001",
+        "fetch_s3_files": ["database_ini/database.ini", "doday_yamls/*"],
+        "local_s3_locations": ["~/.gserver/database.ini", "yamls/*"]
     }
 
     credential_configs = {

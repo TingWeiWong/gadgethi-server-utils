@@ -272,21 +272,23 @@ class GadgetHiServer(HTTPServer):
 	@params table_list: a list of table that is going to be used by this server. 
 	@params initialized_func_list: a list of functions to init the db tables.
 	@params desc: description of the server
-	@params yaml_exccondition: a function that defines the exception condition. If return 
-		True, don't pull it (exception). Otherwise, False.
 	@params configs: All the other configurations setting
 	@params service_handler: If using gadgethi server scheme, this is the service handler function
 	@params config_path: file path to server config yaml
 	@params credential_path: file path to credential yaml
 	@params custom_event_handler: If using custom server scheme, this is the handler function
-	@params fetch_yaml_from_s3: Defaults to true, fetching yaml from s3. Set it to false if 
-		you don't want to pull anything from s3
 	@params authentication: Set to true if need to turn on header authentication
+
+	# Fetch Yaml Deprecated
+	# New scheme requires user put fetch files definition in config file
+	- s3_bucket_name: e.g. gadgethi-001
+	- fetch_s3_files: e.g. ["database_ini/database.ini", "doday_yamls/*"]
+	- local_s3_locations: e.g. ["util/database.ini", "yamls/*"]
 	"""
 	def __init__(self, table_list=[], initialize_func_list=[], desc="GadgetHi Main", 
-		yaml_exccondition=lambda :False, configs={}, service_handler=lambda: None, 
+		configs={}, service_handler=lambda: None, 
 		config_path="", credential_path="",custom_event_handler=None, 
-		fetch_yaml_from_s3=True, authentication=True, **kwargs):
+		authentication=True, **kwargs):
 
 		self.server_config = load_config(config_path)
 		self.credentials_config = load_config(credential_path)
@@ -311,9 +313,12 @@ class GadgetHiServer(HTTPServer):
 		yaml_config.update(self.server_config)
 		yaml_config.update(self.credentials_config)
 
-		# Initialization
-		if fetch_yaml_from_s3:
-			self.fetch_yamls(yaml_config, yaml_exccondition)
+		bucket_name = yaml_config.get("s3_bucket_name", None)
+		fetch_s3_files = yaml_config.get("fetch_s3_files", [])
+		local_s3_locations = yaml_config.get("local_s3_locations", [])
+		if bucket_name:
+			fetch_from_s3(bucket_name, fetch_s3_files, local_s3_locations, **yaml_config)
+
 		GadgetHiHTTPHandler.initialize_configs(yaml_config)
 		
 		if custom_event_handler:
@@ -344,40 +349,6 @@ class GadgetHiServer(HTTPServer):
 		"""
 		print('Starting %s Server at ' % self.desc, self.host, ' port: ', self.port)
 		self.serve_forever()
-
-
-	# Fetch yaml function
-	# -----------------------
-	def fetch_yamls(self, yaml_config, exceptcond=lambda :False):
-		"""
-		This is the helper function to fetch yamls from s3
-		"""
-		import boto3
-
-		ACCESS_ID = yaml_config["aws_access_key_id"] 
-		SECRET_KEY = yaml_config["aws_secret_access_key"] 
-		
-		# bucket and document location info
-		bucket_name = yaml_config["yaml_s3_bucket"]
-		s3_folder_header = yaml_config["yaml_s3_folder"] #"doday_yamls/"
-		local_folder_header = yaml_config["yaml_local_folder"] #"sample_menu/"
-
-		# database ini
-		database_ini_path = yaml_config["s3_database_ini_path"] #"database_ini/database.ini"
-		database_ini_local_path = yaml_config["local_database_ini_path"] #"util/database.ini"
-
-		s3 = boto3.client('s3', aws_access_key_id=ACCESS_ID, aws_secret_access_key=SECRET_KEY)
-		objects = s3.list_objects(Bucket=bucket_name, Prefix=s3_folder_header)["Contents"]
-		print("Pulling Yamls....")
-		for obj in objects:
-			obj_name = obj["Key"].replace(s3_folder_header, "")
-			if exceptcond(obj_name=obj_name, **yaml_config):
-				continue
-			print(obj_name)
-			s3.download_file(bucket_name, s3_folder_header+obj_name, local_folder_header+obj_name)
-
-		# Also fetch database ini here -> no need to put the path to config here -> database ini should also be in util/
-		s3.download_file(bucket_name, database_ini_path, database_ini_local_path)
 
 	def redirectToServices(self, request_dict, **server_config):
 		"""
