@@ -109,23 +109,7 @@ def print_psycopg2_exception(err):
 def getDb():
 	return db_name
 
-# def generate_db_components(table):
-# 	"""
-# 	This function generates the database components related to the 
-# 	given table.
-# 	- Input:
-# 		* table: table_name (ex.'inventory')
-# 	- Return:
-# 		components: dictionary of components 
-# 		(ex.{'columns':all_inventory_columns,'table_name':'inventory_table'})
-# 	"""
-# 	components = {}
-# 	components['columns'] = all_db_columns['all_' + table + '_columns']
-# 	components['table_name'] = (table)
-# 	# print ("components = ",components)
-# 	return components
-
-def generate_db_components(table,customize=False):
+def generate_db_components(table):
 	"""
 	This function generates the database components related to the 
 	given table.
@@ -137,10 +121,14 @@ def generate_db_components(table,customize=False):
 	"""
 	components = {}
 	components['columns'] = all_db_columns['all_' + table + '_columns']
-	if customize:
-		components['table_name'] = (table)
+
+	if table[0] == "@":
+		query_table = table[1:]
 	else:
-		components['table_name'] = (table + '_table')
+		query_table = table + "_table"
+
+
+	components['table_name'] = query_table
 	# print ("components = ",components)
 	return components
 
@@ -662,24 +650,7 @@ def FormatDictList(list_of_dict, key_list):
 
 
 # INIT FUNCTIONS
-# -----------------------------------------------------------------------------------------------------
-# def init_headers():
-# 	global all_db_columns
-
-# 	for columns in all_db_columns_header_data:
-# 		# If no table name specified, see it as a skip
-# 		# print ("Columns in init_headers = ",columns)
-# 		try:
-# 			table_name = all_db_columns_header_data[columns]['table']
-# 			# print ("table name = ",table_name)
-# 		except:
-# 			continue
-
-# 		query_string = '''SELECT * FROM %s;''' % table_name
-# 		all_db_columns[columns] = executeSql(getDb(),query_string,None,db_operations.MODE_DB_W_RETURN_WO_ARGS,header=True)
-
-	# print ("After init headers, all_db_columns = ",all_db_columns)
-
+# ------------------------------------------------------------------
 def init_headers():
 	global all_db_columns
 
@@ -692,5 +663,11 @@ def init_headers():
 		except:
 			continue
 
-		query_string = '''SELECT * FROM %s_table;''' % table_name
+		# If you want full name, add @ in the front of your table name
+		if table_name[0] == "@":
+			query_table_name = table_name[1:]
+		else:
+			query_table_name = table_name + "_table"
+
+		query_string = '''SELECT * FROM %s;''' % query_table_name
 		all_db_columns[columns] = executeSql(getDb(),query_string,None,db_operations.MODE_DB_W_RETURN_WO_ARGS,header=True)
