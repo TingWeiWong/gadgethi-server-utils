@@ -298,24 +298,32 @@ def conditional_generate_query(table, action, target_column_list, conditional_co
 		Insert = '''INSERT into queue_table (order_id, order_no, base, soup, main, food1, food2, food3, special, price, discounted_price, promotion, promotion_key, priority, status, time) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);'''
 
 	"""
-	if conditional_column_number != 1:
-		tuple_str = "(%s"
-		for i in range(conditional_column_number-1):
-			tuple_str += ", %s"
-		tuple_str += ")"
-	else:
-		tuple_str = '(%s)'
+	# Build Conditional Column String
+	# ---------------------------------
+	conditional_column_string = ''
 
-	if conditional_column_list != 'None':
-		if conditional_column_number == 1:
-			conditional_column_string = "WHERE %s" % ' in %s AND '.join(map(str,conditional_column_list))
-			conditional_column_string += " in {}".format(tuple_str)
-		else:
-			concatenater = ' in {} AND '.format(tuple_str)
-			conditional_column_string = "WHERE %s" % concatenater.join(map(str,conditional_column_list))
-			conditional_column_string += " in {}".format(tuple_str)
+	if isinstance(conditional_column_number, list):
+		# Build Tuple List
+		tuple_list = []
+		for num in conditional_column_number:
+			tuple_str = "(%s"
+			for i in range(num-1):
+				tuple_str += ", %s"
+			tuple_str += ")"
+			tuple_list.append(tuple_str)
+
+		assert len(tuple_list) == len(conditional_column_list)
+
+		# Concatenate
+		conditional_column_string = "WHERE "
+		for tid in range(len(tuple_list)-1):
+			conditional_column_string += conditional_column_list[tid] + ' in {} AND '.format(tuple_list[tid])
+		conditional_column_string += conditional_column_list[-1] + ' in {}'.format(tuple_list[-1])
+
 	else:
-		conditional_column_string = ''
+		# If not list, it has to be 1
+		conditional_column_string = "WHERE %s" % ' in %s AND '.join(map(str,conditional_column_list))
+		conditional_column_string += " in %s" # End condition for the last column
 
 	if order_by_list != 'None':
 		order_by_string = "ORDER BY %s" % ', '.join(map(str,order_by_list))

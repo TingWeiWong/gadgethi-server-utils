@@ -9,7 +9,7 @@ with open(os.path.join(os.path.dirname(__file__), "requirements.txt"), "r") as f
 
 setuptools.setup(
     name="gadgethiServerUtils", # Replace with your own username
-    version="0.3.16",
+    version="0.3.17",
     author="Gadgethi Develop Team",
     author_email="developers@gadget-hitech.com",
     description="Gadgethi server maintenance package",

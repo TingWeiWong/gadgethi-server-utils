@@ -194,9 +194,23 @@ def get_data(table, where_columns_list = 'None', where_value_list = 'None', mult
 			# multiple execution
 			# If this is the case, I would assume that where value list is a list of tuples
 			# [(10,), (1,), (2,)] -> and we get multiple matches from db
+
+			# Support Multiple columns in multiple conditions
+			# TODO: Need to fix this whole thing in the future.
+			column_number_list = []
+			deflated_where_value_list = []
+			for val in where_value_list:
+				if isinstance(val, list):
+					column_number_list.append(len(val))
+					deflated_where_value_list.extend(val)
+				else:
+					column_number_list.append(len(where_value_list))
+					deflated_where_value_list.extend(where_value_list)
+					break
+
 			multi_query = conditional_generate_query(db_components['table_name'],'SELECT',db_components['columns'],where_columns_list,
-				len(where_value_list),order_by_list=order_by_list,limit_number=limit_number)
-			fetched_data = executeSql(getDb(), multi_query, tuple(where_value_list), db_operations.MODE_DB_W_RETURN_AND_ARGS)
+				column_number_list,order_by_list=order_by_list,limit_number=limit_number)
+			fetched_data = executeSql(getDb(), multi_query, tuple(deflated_where_value_list), db_operations.MODE_DB_W_RETURN_AND_ARGS)
 
 	# print ("fetched_data in get_data = ",fetched_data)
 	data_list = FormatReturnData(fetched_data) 
