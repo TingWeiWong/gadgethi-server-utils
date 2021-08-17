@@ -246,3 +246,15 @@ def fetch_from_s3(bucket, files, tolocation, **configs):
 				s3.download_file(bucket, s3_folder_header+obj_name, local_folder_header+obj_name)
 		else:
 			s3.download_file(bucket, files[fileid], tolocation[fileid])
+
+def read_yaml_on_s3(bucket_name, file_path):
+	"""
+	This is the helper function to read yaml
+	from s3 and return the dictionary of it. 
+	"""
+	s3 = boto3.client('s3')
+	data = s3.get_object(Bucket=bucket_name, Key=file_path)
+	contents = data['Body'].read()
+	s = contents.decode("utf-8")
+	ret_yaml = yaml.safe_load(s)
+	return ret_yaml
