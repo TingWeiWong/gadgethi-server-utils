@@ -2,6 +2,7 @@ import os
 import requests
 from gadgethiServerUtils.file_basics import *
 from gadgethiServerUtils.authentication import *
+from gadgethiServerUtils._exceptions import *
 from gadgethiServerUtils.time_basics import timeout
 
 """
