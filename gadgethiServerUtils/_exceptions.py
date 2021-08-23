@@ -79,3 +79,32 @@ class LackOfArgumentsError(Exception):
 		return error_message
     
 
+def gexception(function):
+	"""
+	This is the wrapper function to wrap
+	the utility functions and handle error
+	"""
+	def handle_error(*args, **kwargs):
+		"""
+		This wraps try except clause around the function
+		and return the error message. 
+		"""
+		response = None
+		try:
+			response = function(*args, **kwargs)
+			ret = {"indicator": True, "message": response}
+		except Exception as e:
+			_, _, exc_tb = sys.exc_info()
+			fobj = traceback.extract_tb(exc_tb)[-1]
+			fname = fobj.filename
+			line_no = fobj.lineno
+
+			ddyerror = GadosServerError.buildfromexc(str(e), fname, line_no, ''.join(traceback.format_tb(exc_tb)))
+			logging.error("GadosServerError = "+str(ddyerror))
+			print("GadosServerError = "+str(ddyerror))
+			ret = ddyerror.json_response
+
+		if response != None:
+			return ret["message"]
+
+	return handle_error
