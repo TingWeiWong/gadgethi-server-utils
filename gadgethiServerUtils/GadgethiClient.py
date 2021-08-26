@@ -29,7 +29,7 @@ class GadgetHiClient:
         return getattr(self, key)
     
     @gexception
-    @timeout(5)
+    @timeout(10)
     def client_get(self, key, input_dict, gauth=False, custom_headers={}):
         """
         This is the main function to send out HTTP GET. 
@@ -63,7 +63,7 @@ class GadgetHiClient:
         return response
 
     @gexception
-    @timeout(5)
+    @timeout(10)
     def client_post(self, key, input_dict,gauth=False,urlencode=False, 
         custom_headers={}):
         """
@@ -102,7 +102,7 @@ class GadgetHiClient:
         return response
 
     @gexception
-    @timeout(5)
+    @timeout(10)
     def client_put(self, key, input_dict, custom_headers={}):
         """
         This is the main function to send out HTTP PUT. 
