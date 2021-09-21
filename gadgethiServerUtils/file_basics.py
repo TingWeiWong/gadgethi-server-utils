@@ -37,7 +37,7 @@ def read_config_yaml(fn):
 		return e
 
 # @@@ 3 @@@
-def write_yaml(fn, content):
+def write_yaml(fn, content, sort_keys=True):
 	"""
 	This is the helper function that writes to the config yaml and 
 	returns the status indicating whether the operation is successful or not.
@@ -53,7 +53,7 @@ def write_yaml(fn, content):
 	message = "Write to yaml successful"
 	try:
 		with open(fn, "w") as file:
-			yaml.dump(content, file, allow_unicode = True)
+			yaml.dump(content, file, allow_unicode = True, sort_keys=sort_keys)
 	except Exception as e:
 		indicator = False
 		message = str(e) 
