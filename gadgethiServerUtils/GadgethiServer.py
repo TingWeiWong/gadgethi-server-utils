@@ -292,7 +292,7 @@ class GadgetHiServer(HTTPServer):
 
 		if aws_fake_server:
 			self.http_handler = GadgetHiHTTPHandler
-			GadgetHiHTTPHandler.initialize_service_redirect(self.service_handler)
+			GadgetHiHTTPHandler.initialize_service_redirect(service_handler)
 
 			self.host = configs["server_address"]
 			self.port = int(configs["server_port"])
