@@ -294,10 +294,13 @@ class GadgetHiServer(HTTPServer):
 			self.http_handler = GadgetHiHTTPHandler
 			GadgetHiHTTPHandler.initialize_service_redirect(self.service_handler)
 
+			self.host = configs["server_address"]
+			self.port = int(configs["server_port"])
+
 			# Set authentication
 			configs["serverAuthentication"] = authentication
 			GadgetHiHTTPHandler.initialize_configs(configs)
-			
+
 			print("*** Server Initialized ***")
 			return
 
