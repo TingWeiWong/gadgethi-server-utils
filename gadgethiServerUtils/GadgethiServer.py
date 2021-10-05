@@ -293,6 +293,11 @@ class GadgetHiServer(HTTPServer):
 		if aws_fake_server:
 			self.http_handler = GadgetHiHTTPHandler
 			GadgetHiHTTPHandler.initialize_service_redirect(self.service_handler)
+
+			# Set authentication
+			configs["serverAuthentication"] = authentication
+			GadgetHiHTTPHandler.initialize_configs(configs)
+			
 			print("*** Server Initialized ***")
 			return
 
