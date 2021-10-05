@@ -295,7 +295,9 @@ class GadgetHiServer(HTTPServer):
 			This part is for aws handler fake test server
 			"""
 			self.http_handler = GadgetHiHTTPHandler
-			GadgetHiHTTPHandler.initialize_service_redirect(service_handler)
+			self.service_handler = service_handler
+			
+			GadgetHiHTTPHandler.initialize_service_redirect(self.service_handler)
 
 			self.desc = desc
 			self.host = configs["server_address"]
