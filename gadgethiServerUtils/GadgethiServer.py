@@ -294,6 +294,7 @@ class GadgetHiServer(HTTPServer):
 			self.http_handler = GadgetHiHTTPHandler
 			GadgetHiHTTPHandler.initialize_service_redirect(service_handler)
 
+			self.desc = desc
 			self.host = configs["server_address"]
 			self.port = int(configs["server_port"])
 
