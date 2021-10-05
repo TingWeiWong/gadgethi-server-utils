@@ -288,7 +288,13 @@ class GadgetHiServer(HTTPServer):
 	def __init__(self, table_list=[], initialize_func_list=[], desc="GadgetHi Main", 
 		configs={}, service_handler=lambda: None, 
 		config_path="", credential_path="",custom_event_handler=None, 
-		authentication=True, **kwargs):
+		authentication=True, aws_fake_server=False, **kwargs):
+
+		if aws_fake_server:
+			self.http_handler = GadgetHiHTTPHandler
+			GadgetHiHTTPHandler.initialize_service_redirect(self.service_handler)
+			print("*** Server Initialized ***")
+			return
 
 		self.server_config = load_config(config_path)
 		self.credentials_config = load_config(credential_path)
