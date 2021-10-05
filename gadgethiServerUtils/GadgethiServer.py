@@ -291,12 +291,18 @@ class GadgetHiServer(HTTPServer):
 		authentication=True, aws_fake_server=False, **kwargs):
 
 		if aws_fake_server:
+			"""
+			This part is for aws handler fake test server
+			"""
 			self.http_handler = GadgetHiHTTPHandler
 			GadgetHiHTTPHandler.initialize_service_redirect(service_handler)
 
 			self.desc = desc
 			self.host = configs["server_address"]
 			self.port = int(configs["server_port"])
+
+			local_server_address = (self.host, self.port)
+			super().__init__(local_server_address, self.http_handler)
 
 			# Set authentication
 			configs["serverAuthentication"] = authentication
