@@ -275,22 +275,26 @@ def add_to_table(table, adding_list):
 	- Return:
 		* message: indicating if the add operation has been successful
 	"""
-	db_components = generate_db_components(table)
+	try:
+		db_components = generate_db_components(table)
 
-	add_query = generate_query(db_components['table_name'],'INSERT',db_components['columns'])
+		add_query = generate_query(db_components['table_name'],'INSERT',db_components['columns'])
 
-	# print ("db_components columns = ",db_components['columns'])
+		# print ("db_components columns = ",db_components['columns'])
 
-	add_arguments = [extract_data(index, db_components['columns']) for index in adding_list]
+		add_arguments = [extract_data(index, db_components['columns']) for index in adding_list]
+
+	except:
+		return False
 
 	# print ("Add arguments = ",add_arguments)
 
 	if (len(add_arguments) == 1):
-		executeSql(getDb(),add_query,add_arguments[0],db_operations.MODE_DB_W_ARGS)
+		result = executeSql(getDb(),add_query,add_arguments[0],db_operations.MODE_DB_W_ARGS)
+		return False if result == False else True
 	else:
-		execute_multiple_Sql(getDb(),add_query,add_arguments,db_operations.MODE_DB_W_ARGS)
-
-	return "None"
+		result = execute_multiple_Sql(getDb(),add_query,add_arguments,db_operations.MODE_DB_W_ARGS)
+		return False if result == False else True
 
 def add_to_table_general(table, adding_list):
 	"""
@@ -302,23 +306,27 @@ def add_to_table_general(table, adding_list):
 	that is to be added. Although it can be less than the db
 	columns.
 	"""
-	db_components = generate_db_components(table)
+	try:
+		db_components = generate_db_components(table)
 
-	addlist_key = set(adding_list[0].keys())
-	db_header_columns = set(db_components['columns'])
+		addlist_key = set(adding_list[0].keys())
+		db_header_columns = set(db_components['columns'])
 
-	intersect_key = list(addlist_key.intersection(db_header_columns))
+		intersect_key = list(addlist_key.intersection(db_header_columns))
 
-	add_query = generate_query(db_components['table_name'],'INSERT',intersect_key)
+		add_query = generate_query(db_components['table_name'],'INSERT',intersect_key)
 
-	add_arguments = [extract_data(entry, intersect_key) for entry in adding_list]
+		add_arguments = [extract_data(entry, intersect_key) for entry in adding_list]
+	
+	except:
+		return False
 
 	if (len(add_arguments) == 1):
-		executeSql(getDb(),add_query,add_arguments[0],db_operations.MODE_DB_W_ARGS)
+		result = executeSql(getDb(),add_query,add_arguments[0],db_operations.MODE_DB_W_ARGS)
+		return False if result == False else True	
 	else:
-		execute_multiple_Sql(getDb(),add_query,add_arguments,db_operations.MODE_DB_W_ARGS)
-
-	return "None"
+		result = execute_multiple_Sql(getDb(),add_query,add_arguments,db_operations.MODE_DB_W_ARGS)
+		return False if result == False else True
 
 def edit_on_table(table, editing_list, where_columns_list):
 	"""
@@ -334,33 +342,39 @@ def edit_on_table(table, editing_list, where_columns_list):
 	"""
 
 	if editing_list == []:
-		return "None"
+		return True
 
 	# print ("editing_list = ",editing_list)
-	db_components = generate_db_components(table)
+	try:
 
-	edit_columns = [key for key in editing_list[0] if key in db_components['columns']]
+		db_components = generate_db_components(table)
 
-	# print ("edit_columns = ",edit_columns)
+		edit_columns = [key for key in editing_list[0] if key in db_components['columns']]
 
-	edit_query = generate_query(db_components['table_name'],'UPDATE',edit_columns,where_columns_list)
+		# print ("edit_columns = ",edit_columns)
 
-	# print(edit_query)
-	# print ("edit_query = ",edit_query)
-	# edit_arguments = [tuple(index.values()) + tuple(index[key] for key in where_columns_list) for index in editing_list]
+		edit_query = generate_query(db_components['table_name'],'UPDATE',edit_columns,where_columns_list)
 
-	edit_arguments = [extract_data(index, edit_columns) + tuple(index[key] for key in where_columns_list) for index in editing_list]
+		# print(edit_query)
+		# print ("edit_query = ",edit_query)
+		# edit_arguments = [tuple(index.values()) + tuple(index[key] for key in where_columns_list) for index in editing_list]
 
-	print ("edit_arguments = ",edit_arguments)
+		edit_arguments = [extract_data(index, edit_columns) + tuple(index[key] for key in where_columns_list) for index in editing_list]
+
+		print ("edit_arguments = ",edit_arguments)
+
+	except:
+		return False
 
 	if (len(edit_arguments) == 1):
 		# print ("single")
-		executeSql(getDb(),edit_query,edit_arguments[0],db_operations.MODE_DB_W_ARGS)
+		result = executeSql(getDb(),edit_query,edit_arguments[0],db_operations.MODE_DB_W_ARGS)
+		return False if result == False else True
+
 		# print ("executed")
 	else:
-		execute_multiple_Sql(getDb(),edit_query,edit_arguments,db_operations.MODE_DB_W_ARGS)
-
-	return "None"
+		result = execute_multiple_Sql(getDb(),edit_query,edit_arguments,db_operations.MODE_DB_W_ARGS)
+		return False if result == False else True
 
 
 def delete_from_table(table, deleting_list, where_columns_list):
@@ -377,18 +391,13 @@ def delete_from_table(table, deleting_list, where_columns_list):
 	"""
 
 	if deleting_list == []:
-		return None
+		return True
 
 	db_components = generate_db_components(table)
 
 	delete_arguments = [extract_data(index, where_columns_list) for index in deleting_list]
 
-
-
 	data_dict = get_data(table, where_columns_list, where_value_list)
-
-	pass
-
 
 
 def delete_inventory(delete_data):
