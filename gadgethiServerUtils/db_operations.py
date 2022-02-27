@@ -433,7 +433,7 @@ def executeSql(db_path, sql, entries, mode, debug_print=False, header=False):
 	except (Exception, psycopg2.DatabaseError) as error:
 		# print("Database execution error = ",error)
 		print_psycopg2_exception(error)
-		return error
+		return False
 
 	finally:
 		if conn is not None:
@@ -502,7 +502,10 @@ def execute_multiple_Sql(db_path, sql, entries, mode, debug_print=False, header=
 		conn.commit()
 		c.close()
 	except (Exception, psycopg2.DatabaseError) as error:
-		print(error)
+		# print(error)
+		print_psycopg2_exception(error)
+		return False
+
 	finally:
 		if conn is not None:
 			conn.close()

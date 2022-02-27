@@ -286,11 +286,11 @@ def add_to_table(table, adding_list):
 	# print ("Add arguments = ",add_arguments)
 
 	if (len(add_arguments) == 1):
-		executeSql(getDb(),add_query,add_arguments[0],db_operations.MODE_DB_W_ARGS)
+		result = executeSql(getDb(),add_query,add_arguments[0],db_operations.MODE_DB_W_ARGS)
+		return False if result == False else True
 	else:
-		execute_multiple_Sql(getDb(),add_query,add_arguments,db_operations.MODE_DB_W_ARGS)
-
-	return "None"
+		result = execute_multiple_Sql(getDb(),add_query,add_arguments,db_operations.MODE_DB_W_ARGS)
+		return False if result == False else True
 
 def add_to_table_general(table, adding_list):
 	"""
@@ -314,11 +314,11 @@ def add_to_table_general(table, adding_list):
 	add_arguments = [extract_data(entry, intersect_key) for entry in adding_list]
 
 	if (len(add_arguments) == 1):
-		executeSql(getDb(),add_query,add_arguments[0],db_operations.MODE_DB_W_ARGS)
+		result = executeSql(getDb(),add_query,add_arguments[0],db_operations.MODE_DB_W_ARGS)
+		return False if result == False else True	
 	else:
-		execute_multiple_Sql(getDb(),add_query,add_arguments,db_operations.MODE_DB_W_ARGS)
-
-	return "None"
+		result = execute_multiple_Sql(getDb(),add_query,add_arguments,db_operations.MODE_DB_W_ARGS)
+		return False if result == False else True
 
 def edit_on_table(table, editing_list, where_columns_list):
 	"""
@@ -334,7 +334,7 @@ def edit_on_table(table, editing_list, where_columns_list):
 	"""
 
 	if editing_list == []:
-		return "None"
+		return True
 
 	# print ("editing_list = ",editing_list)
 	db_components = generate_db_components(table)
@@ -355,12 +355,13 @@ def edit_on_table(table, editing_list, where_columns_list):
 
 	if (len(edit_arguments) == 1):
 		# print ("single")
-		executeSql(getDb(),edit_query,edit_arguments[0],db_operations.MODE_DB_W_ARGS)
+		result = executeSql(getDb(),edit_query,edit_arguments[0],db_operations.MODE_DB_W_ARGS)
+		return False if result == False else True
+
 		# print ("executed")
 	else:
-		execute_multiple_Sql(getDb(),edit_query,edit_arguments,db_operations.MODE_DB_W_ARGS)
-
-	return "None"
+		result = execute_multiple_Sql(getDb(),edit_query,edit_arguments,db_operations.MODE_DB_W_ARGS)
+		return False if result == False else True
 
 
 def delete_from_table(table, deleting_list, where_columns_list):
@@ -377,18 +378,13 @@ def delete_from_table(table, deleting_list, where_columns_list):
 	"""
 
 	if deleting_list == []:
-		return None
+		return True
 
 	db_components = generate_db_components(table)
 
 	delete_arguments = [extract_data(index, where_columns_list) for index in deleting_list]
 
-
-
 	data_dict = get_data(table, where_columns_list, where_value_list)
-
-	pass
-
 
 
 def delete_inventory(delete_data):
