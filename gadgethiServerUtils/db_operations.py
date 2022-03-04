@@ -677,5 +677,5 @@ def init_headers():
 		else:
 			query_table_name = table_name + "_table"
 
-		query_string = '''SELECT * FROM %s;''' % query_table_name
+		query_string = '''SELECT * FROM %s limit 1;''' % query_table_name
 		all_db_columns[columns] = executeSql(getDb(),query_string,None,db_operations.MODE_DB_W_RETURN_WO_ARGS,header=True)
