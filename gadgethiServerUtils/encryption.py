@@ -101,6 +101,9 @@ class GadgetEncryption:
 		Output:
 			encrypted (string): output data in base64 format
 		"""
+		if self.AES_decode_mode == 'hex':
+			data = codecs.encode(codecs.decode(data, 'hex'), 'base64').decode()
+
 		data = base64.b64decode(data)
 		cryptor = AES.new(self.key, AES.MODE_CBC, self.iv)
 		decrypted = cryptor.decrypt(data)
@@ -230,5 +233,3 @@ class GadgetEncryption:
 		dictionary = dictionary.replace(": ",":")
 		dictionary = dictionary.replace(", ",",")
 		return (dictionary.encode(),signature)
-
-	
