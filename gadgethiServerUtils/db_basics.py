@@ -2,7 +2,7 @@
 from gadgethiServerUtils.db_operations import *
 import collections
 
-def merge_Data(selection_dict, table, multiple_vals=False,other_db=other_db):
+def merge_Data(selection_dict, table, multiple_vals=False,other_db="None"):
 	"""
 	This function reverses the split Data result given selection criterion (ex.order_id).
 	After reading from database, get all rows that meet the criterion and merge them back.
@@ -150,7 +150,7 @@ def split_Data(input_data, number_of_data):
 
 
 def get_data(table, where_columns_list = 'None', where_value_list = 'None', multiple=False,
-		order_by_list = 'None', special_where = False, limit_number ='None',other_db='None'):
+		order_by_list = 'None', special_where = False, limit_number ='None',other_db="None"):
 	"""
 
 	This function fetches the rows given the arguments at WHERE = %s
@@ -263,7 +263,7 @@ def separate_edit_add(splitted_list, table, where_columns_list):
 	return separted_dict
 
 
-def add_to_table(table, adding_list,other_db=other_db):
+def add_to_table(table, adding_list,other_db="None"):
 	"""
 	This is the common function for inserting data,
 	there will be no logic tests for checking duplicacy
@@ -296,7 +296,7 @@ def add_to_table(table, adding_list,other_db=other_db):
 		result = execute_multiple_Sql(getDb(),add_query,add_arguments,db_operations.MODE_DB_W_ARGS,other_db=other_db)
 		return False if result == False else True
 
-def add_to_table_general(table, adding_list,other_db=other_db):
+def add_to_table_general(table, adding_list,other_db="None"):
 	"""
 	Assume that the key that is to be inserted might be
 	less than the total columns of the table. So, add the 
@@ -328,7 +328,7 @@ def add_to_table_general(table, adding_list,other_db=other_db):
 		result = execute_multiple_Sql(getDb(),add_query,add_arguments,db_operations.MODE_DB_W_ARGS,other_db=other_db)
 		return False if result == False else True
 
-def edit_on_table(table, editing_list, where_columns_list,other_db=other_db):
+def edit_on_table(table, editing_list, where_columns_list,other_db="None"):
 	"""
 	This function edits existing row(s)
 
@@ -400,7 +400,7 @@ def delete_from_table(table, deleting_list, where_columns_list):
 	data_dict = get_data(table, where_columns_list, where_value_list)
 
 
-def delete_inventory(delete_data,other_db=other_db):
+def delete_inventory(delete_data,other_db="None"):
 	"""
 	delete an specific inventory from the inventory table
 	"""
