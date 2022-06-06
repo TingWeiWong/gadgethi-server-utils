@@ -388,16 +388,52 @@ def delete_from_table(table, deleting_list, where_columns_list):
 
 	- Return:
 		* message: indicating if the edit operation has been successful
+	
+		order_id   payment   takeout	
+		100			 cash      true
+		100          line      false
+		101          cash      false
+	
+	Invalid format (each dictionary should have same length of where_column):
+		deleting_list: [{"order_id":100}, {"order_id":100, "payment":"line"}]
+
 	"""
 
 	if deleting_list == []:
 		return True
 
-	db_components = generate_db_components(table)
+	try:
 
-	delete_arguments = [extract_data(index, where_columns_list) for index in deleting_list]
+		db_components = generate_db_components(table)
 
-	data_dict = get_data(table, where_columns_list, where_value_list)
+		delete_query = generate_query(db_components['table_name'],'DELETE',[],where_columns_list)
+
+		# Make sure all of deleting list keys are in where_columns_list
+		check = set(where_columns_list) == set().union(*deleting_list)
+		if not check:
+			print ("Mismatch between where_columns_list and deleting_list")
+			return False
+
+		delete_arguments = [extract_data(index, where_columns_list) for index in deleting_list]
+
+		print ("delete_arguments = ",delete_arguments)
+
+	except:
+		return False
+
+	if (len(delete_arguments) == 1):
+		# print ("single")
+		result = executeSql(getDb(),delete_query,delete_arguments[0],db_operations.MODE_DB_W_ARGS)
+		return False if result == False else True
+
+		# print ("executed")
+	else:
+		result = execute_multiple_Sql(getDb(),delete_query,delete_arguments,db_operations.MODE_DB_W_ARGS)
+		return False if result == False else True
+
+
+
+
 
 
 def delete_inventory(delete_data,other_db="None"):
