@@ -377,7 +377,7 @@ def edit_on_table(table, editing_list, where_columns_list,other_db="None"):
 		return False if result == False else True
 
 
-def delete_from_table(table, deleting_list, where_columns_list):
+def delete_from_table(table, deleting_list, where_columns_list,other_db="None"):
 	"""
 	This function edits existing row(s)
 
@@ -423,12 +423,12 @@ def delete_from_table(table, deleting_list, where_columns_list):
 
 	if (len(delete_arguments) == 1):
 		# print ("single")
-		result = executeSql(getDb(),delete_query,delete_arguments[0],db_operations.MODE_DB_W_ARGS)
+		result = executeSql(getDb(),delete_query,delete_arguments[0],db_operations.MODE_DB_W_ARGS,other_db=other_db)
 		return False if result == False else True
 
 		# print ("executed")
 	else:
-		result = execute_multiple_Sql(getDb(),delete_query,delete_arguments,db_operations.MODE_DB_W_ARGS)
+		result = execute_multiple_Sql(getDb(),delete_query,delete_arguments,db_operations.MODE_DB_W_ARGS,other_db=other_db)
 		return False if result == False else True
 
 
