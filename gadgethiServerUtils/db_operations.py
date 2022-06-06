@@ -372,7 +372,7 @@ class db_operations(Enum):
 #to accept db_path as argument. If it's able to accept table name, it
 #will be even better.
 
-def executeSql(db_path, sql, entries, mode, debug_print=False, header=False):
+def executeSql(db_path, sql, entries, mode, debug_print=False, header=False, other_db='None'):
 	"""
 	This helper function connects to 
 	the database and execute the sql 
@@ -387,8 +387,12 @@ def executeSql(db_path, sql, entries, mode, debug_print=False, header=False):
 	conn = None
 	try:
 		# read database configuration
-		if isTest(): params = config(section='tests')
-		else: params = config(section=db_path)
+		if isTest(): 
+			params = config(section='tests')
+		elif other_db != 'None':
+			params = config(section=other_db)
+		else: 
+			params = config(section=db_path)
 		
 		# connect to the PostgreSQL database
 		conn = psycopg2.connect(**params)
@@ -442,7 +446,7 @@ def executeSql(db_path, sql, entries, mode, debug_print=False, header=False):
 	return ret
 
 
-def execute_multiple_Sql(db_path, sql, entries, mode, debug_print=False, header=False):
+def execute_multiple_Sql(db_path, sql, entries, mode, debug_print=False, header=False, other_db='None'):
 	"""
 	This helper function connects to 
 	the database and execute the sql 
@@ -459,9 +463,12 @@ def execute_multiple_Sql(db_path, sql, entries, mode, debug_print=False, header=
 	conn = None
 	try:
 		# read database configuration
-		if isTest(): params = config(section='tests')
-		else: params = config(section=db_path)
-		
+		if isTest(): 
+			params = config(section='tests')
+		elif other_db != 'None':
+			params = config(section=other_db)
+		else: 
+			params = config(section=db_path)
 		# connect to the PostgreSQL database
 		conn = psycopg2.connect(**params)
 
