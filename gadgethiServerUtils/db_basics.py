@@ -2,7 +2,7 @@
 from gadgethiServerUtils.db_operations import *
 import collections
 
-def merge_Data(selection_dict, table, multiple_vals=False):
+def merge_Data(selection_dict, table, multiple_vals=False,other_db="None"):
 	"""
 	This function reverses the split Data result given selection criterion (ex.order_id).
 	After reading from database, get all rows that meet the criterion and merge them back.
@@ -44,7 +44,7 @@ def merge_Data(selection_dict, table, multiple_vals=False):
 		
 		query = "SELECT {} FROM {} WHERE {} IN %s".format("%s" % ', '.join(map(str,db_components['columns'])), db_components['table_name'], where_columns_list[0])
 		print("query: ", query)
-		fetched_data = executeSql(getDb(), query, (where_value_list[0],), db_operations.MODE_DB_W_RETURN_AND_ARGS)
+		fetched_data = executeSql(getDb(), query, (where_value_list[0],), db_operations.MODE_DB_W_RETURN_AND_ARGS,other_db=other_db)
 		data_list = FormatReturnData(fetched_data) 
 		# print ("queue_list = ",queue_list)
 		matched_data = FormatReturnDict(db_components['columns'],data_list)
@@ -150,7 +150,7 @@ def split_Data(input_data, number_of_data):
 
 
 def get_data(table, where_columns_list = 'None', where_value_list = 'None', multiple=False,
-		order_by_list = 'None', special_where = False, limit_number ='None'):
+		order_by_list = 'None', special_where = False, limit_number ='None',other_db="None"):
 	"""
 
 	This function fetches the rows given the arguments at WHERE = %s
@@ -178,7 +178,7 @@ def get_data(table, where_columns_list = 'None', where_value_list = 'None', mult
 		else:
 			query = special_generate_query(db_components['table_name'],'SELECT',db_components['columns'],order_by_list=order_by_list,limit_number=limit_number)
 		# print ("query = ",query)
-		fetched_data = executeSql(getDb(), query, None, db_operations.MODE_DB_W_RETURN_WO_ARGS)
+		fetched_data = executeSql(getDb(), query, None, db_operations.MODE_DB_W_RETURN_WO_ARGS,other_db=other_db)
 		# print ("getDb table = ",getDb())
 		# print ("fetched_data = ",fetched_data)
 	else:
@@ -189,7 +189,7 @@ def get_data(table, where_columns_list = 'None', where_value_list = 'None', mult
 				query = special_generate_query(db_components['table_name'],'SELECT',db_components['columns'], where_columns_list, order_by_list=order_by_list,limit_number=limit_number)
 			
 			# print ("query = " + query)
-			fetched_data = executeSql(getDb(), query, tuple(where_value_list), db_operations.MODE_DB_W_RETURN_AND_ARGS)
+			fetched_data = executeSql(getDb(), query, tuple(where_value_list), db_operations.MODE_DB_W_RETURN_AND_ARGS,other_db=other_db)
 		else:
 			# multiple execution
 			# If this is the case, I would assume that where value list is a list of tuples
@@ -210,7 +210,7 @@ def get_data(table, where_columns_list = 'None', where_value_list = 'None', mult
 
 			multi_query = conditional_generate_query(db_components['table_name'],'SELECT',db_components['columns'],where_columns_list,
 				column_number_list,order_by_list=order_by_list,limit_number=limit_number)
-			fetched_data = executeSql(getDb(), multi_query, tuple(deflated_where_value_list), db_operations.MODE_DB_W_RETURN_AND_ARGS)
+			fetched_data = executeSql(getDb(), multi_query, tuple(deflated_where_value_list), db_operations.MODE_DB_W_RETURN_AND_ARGS,other_db=other_db)
 
 	# print ("fetched_data in get_data = ",fetched_data)
 	data_list = FormatReturnData(fetched_data) 
@@ -263,7 +263,7 @@ def separate_edit_add(splitted_list, table, where_columns_list):
 	return separted_dict
 
 
-def add_to_table(table, adding_list):
+def add_to_table(table, adding_list,other_db="None"):
 	"""
 	This is the common function for inserting data,
 	there will be no logic tests for checking duplicacy
@@ -290,13 +290,13 @@ def add_to_table(table, adding_list):
 	# print ("Add arguments = ",add_arguments)
 
 	if (len(add_arguments) == 1):
-		result = executeSql(getDb(),add_query,add_arguments[0],db_operations.MODE_DB_W_ARGS)
+		result = executeSql(getDb(),add_query,add_arguments[0],db_operations.MODE_DB_W_ARGS,other_db=other_db)
 		return False if result == False else True
 	else:
-		result = execute_multiple_Sql(getDb(),add_query,add_arguments,db_operations.MODE_DB_W_ARGS)
+		result = execute_multiple_Sql(getDb(),add_query,add_arguments,db_operations.MODE_DB_W_ARGS,other_db=other_db)
 		return False if result == False else True
 
-def add_to_table_general(table, adding_list):
+def add_to_table_general(table, adding_list,other_db="None"):
 	"""
 	Assume that the key that is to be inserted might be
 	less than the total columns of the table. So, add the 
@@ -322,13 +322,13 @@ def add_to_table_general(table, adding_list):
 		return False
 
 	if (len(add_arguments) == 1):
-		result = executeSql(getDb(),add_query,add_arguments[0],db_operations.MODE_DB_W_ARGS)
+		result = executeSql(getDb(),add_query,add_arguments[0],db_operations.MODE_DB_W_ARGS,other_db=other_db)
 		return False if result == False else True	
 	else:
-		result = execute_multiple_Sql(getDb(),add_query,add_arguments,db_operations.MODE_DB_W_ARGS)
+		result = execute_multiple_Sql(getDb(),add_query,add_arguments,db_operations.MODE_DB_W_ARGS,other_db=other_db)
 		return False if result == False else True
 
-def edit_on_table(table, editing_list, where_columns_list):
+def edit_on_table(table, editing_list, where_columns_list,other_db="None"):
 	"""
 	This function edits existing row(s)
 
@@ -368,16 +368,16 @@ def edit_on_table(table, editing_list, where_columns_list):
 
 	if (len(edit_arguments) == 1):
 		# print ("single")
-		result = executeSql(getDb(),edit_query,edit_arguments[0],db_operations.MODE_DB_W_ARGS)
+		result = executeSql(getDb(),edit_query,edit_arguments[0],db_operations.MODE_DB_W_ARGS,other_db=other_db)
 		return False if result == False else True
 
 		# print ("executed")
 	else:
-		result = execute_multiple_Sql(getDb(),edit_query,edit_arguments,db_operations.MODE_DB_W_ARGS)
+		result = execute_multiple_Sql(getDb(),edit_query,edit_arguments,db_operations.MODE_DB_W_ARGS,other_db=other_db)
 		return False if result == False else True
 
 
-def delete_from_table(table, deleting_list, where_columns_list):
+def delete_from_table(table, deleting_list, where_columns_list,other_db="None"):
 	"""
 	This function edits existing row(s)
 
@@ -423,12 +423,12 @@ def delete_from_table(table, deleting_list, where_columns_list):
 
 	if (len(delete_arguments) == 1):
 		# print ("single")
-		result = executeSql(getDb(),delete_query,delete_arguments[0],db_operations.MODE_DB_W_ARGS)
+		result = executeSql(getDb(),delete_query,delete_arguments[0],db_operations.MODE_DB_W_ARGS,other_db=other_db)
 		return False if result == False else True
 
 		# print ("executed")
 	else:
-		result = execute_multiple_Sql(getDb(),delete_query,delete_arguments,db_operations.MODE_DB_W_ARGS)
+		result = execute_multiple_Sql(getDb(),delete_query,delete_arguments,db_operations.MODE_DB_W_ARGS,other_db=other_db)
 		return False if result == False else True
 
 
@@ -436,7 +436,7 @@ def delete_from_table(table, deleting_list, where_columns_list):
 
 
 
-def delete_inventory(delete_data):
+def delete_inventory(delete_data,other_db="None"):
 	"""
 	delete an specific inventory from the inventory table
 	"""
@@ -446,7 +446,7 @@ def delete_inventory(delete_data):
 		raise GadosServerError( "This inventory doesn't exist in the inventory table")
 
 	delete_entry = generate_query('inventory_table','DELETE',['material'])
-	executeSql(getDb(), delete_entry, (material), db_operations.MODE_DB_W_ARGS)
+	executeSql(getDb(), delete_entry, (material), db_operations.MODE_DB_W_ARGS,other_db=other_db)
 	message = "Material {} deleted on inventory table".format(material)	
 	return {"indicator":True, "message": message}
 
