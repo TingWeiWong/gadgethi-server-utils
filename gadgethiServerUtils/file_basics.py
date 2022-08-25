@@ -234,27 +234,36 @@ def fetch_from_s3(bucket, files, tolocation, **configs):
 
 	logging.info("Pulling Files From S3....")
 
-	for fileid in range(len(files)):
-		# wild card for all files in single folder
-		if "*" == files[fileid][-1]:
-			s3_folder_header = files[fileid][:-1]
-			local_folder_header = tolocation[fileid][:-1]
-			objects = s3.list_objects(Bucket=bucket, Prefix=s3_folder_header)["Contents"]
-			for obj in objects:
-				obj_name = obj["Key"].replace(s3_folder_header, "")
-				logging.info(obj_name)
-				s3.download_file(bucket, s3_folder_header+obj_name, local_folder_header+obj_name)
-		else:
-			s3.download_file(bucket, files[fileid], tolocation[fileid])
+	try:
+		for fileid in range(len(files)):
+			# wild card for all files in single folder
+			if "*" == files[fileid][-1]:
+				s3_folder_header = files[fileid][:-1]
+				local_folder_header = tolocation[fileid][:-1]
+				objects = s3.list_objects(Bucket=bucket, Prefix=s3_folder_header)["Contents"]
+				for obj in objects:
+					obj_name = obj["Key"].replace(s3_folder_header, "")
+					logging.info(obj_name)
+					s3.download_file(bucket, s3_folder_header+obj_name, local_folder_header+obj_name)
+			else:
+				s3.download_file(bucket, files[fileid], tolocation[fileid])
+	except Exception as e:
+		print("Failed to Pull Files from S3(%s)"%(str(e)))
+		logging.info("Failed to Pull Files from S3(%s)"%(str(e)))
+		pass
 
 def read_yaml_on_s3(bucket_name, file_path):
 	"""
 	This is the helper function to read yaml
 	from s3 and return the dictionary of it. 
 	"""
-	s3 = boto3.client('s3')
-	data = s3.get_object(Bucket=bucket_name, Key=file_path)
-	contents = data['Body'].read()
-	s = contents.decode("utf-8")
-	ret_yaml = yaml.safe_load(s)
-	return ret_yaml
+	try:
+		s3 = boto3.client('s3')
+		data = s3.get_object(Bucket=bucket_name, Key=file_path)
+		contents = data['Body'].read()
+		s = contents.decode("utf-8")
+		ret_yaml = yaml.safe_load(s)
+		return ret_yaml
+	except Exception as e:
+		logging.info("Failed to Read YAML on S3(%s)"%(str(e)))
+		return {}
