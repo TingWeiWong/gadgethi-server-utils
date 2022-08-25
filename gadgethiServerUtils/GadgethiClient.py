@@ -30,7 +30,7 @@ class GadgetHiClient:
     
     @gexception
     @timeout(10)
-    def client_get(self, key, input_dict, gauth=False, custom_headers={}):
+    def client_get(self, key, input_dict, gauth=False, custom_headers={}, timeout=10):
         """
         This is the main function to send out HTTP GET. 
         @params key: the key of the url stored in the ADT
@@ -39,6 +39,7 @@ class GadgetHiClient:
         @params gauth: whether we should enable gadgethi authentication, 
             adding auth headers to the HTTP packets
         @params custom_headers: custom headers to send, default empty. 
+        @params timeout: custom timeout (in sec).
         """
         get_query = self[key]
 
@@ -56,16 +57,16 @@ class GadgetHiClient:
             auth_header = a.getGServerAuthHeaders()
             headers = custom_headers
             headers.update(auth_header)
-            r = requests.get(get_query,headers=headers)
+            r = requests.get(get_query,headers=headers, timeout=timeout)
         else:
-            r = requests.get(get_query,headers=custom_headers)
+            r = requests.get(get_query,headers=custom_headers, timeout=timeout)
         response = r.text 
         return response
 
     @gexception
     @timeout(10)
     def client_post(self, key, input_dict,gauth=False,urlencode=False, 
-        custom_headers={}):
+        custom_headers={}, timeout=10):
         """
         This is the main function to send out HTTP POST. 
         @params key: the key of the url stored in the ADT
@@ -76,6 +77,7 @@ class GadgetHiClient:
         @params urlencode: This defines the application type of the POST content. 
             If True -> www-urlencode, default False -> json
         @params custom_headers: custom headers to send, default empty. 
+        @params timeout: custom timeout (in sec).
         """
         post_query = self[key]
 
@@ -87,23 +89,23 @@ class GadgetHiClient:
             headers.update(auth_header)
 
             if urlencode:
-                r = requests.post(post_query, data=input_dict,headers=headers)
+                r = requests.post(post_query, data=input_dict,headers=headers, timeout=timeout)
             else:
-                r = requests.post(post_query, json=input_dict,headers=headers)
+                r = requests.post(post_query, json=input_dict,headers=headers, timeout=timeout)
             response = r.text           
         else:
 
             if urlencode:
-                r = requests.post(post_query, data=input_dict,headers=custom_headers)
+                r = requests.post(post_query, data=input_dict,headers=custom_headers, timeout=timeout)
             else:
-                r = requests.post(post_query, json=input_dict,headers=custom_headers)
+                r = requests.post(post_query, json=input_dict,headers=custom_headers, timeout=timeout)
             response = r.text
 
         return response
 
     @gexception
     @timeout(10)
-    def client_put(self, key, input_dict, custom_headers={}):
+    def client_put(self, key, input_dict, custom_headers={}, timeout=10):
         """
         This is the main function to send out HTTP PUT. 
         @params key: the key of the url stored in the ADT
@@ -112,10 +114,11 @@ class GadgetHiClient:
         @params gauth: whether we should enable gadgethi authentication, 
             adding auth headers to the HTTP packets
         @params custom_headers: custom headers to send, default empty. 
+        @params timeout: custom timeout (in sec).
         """
         put_query = self[key]
 
-        r = requests.put(put_query, data=input_dict,headers=custom_headers)
+        r = requests.put(put_query, data=input_dict,headers=custom_headers, timeout=timeout)
         response = r.text
         return response
 
