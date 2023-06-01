@@ -3,6 +3,7 @@ from http.server import HTTPServer, BaseHTTPRequestHandler, SimpleHTTPRequestHan
 from urllib.parse import unquote
 from io import BytesIO, BufferedReader
 import threading
+from socketserver import ThreadingMixIn
 
 from gadgethiServerUtils._exceptions import *
 from gadgethiServerUtils.db_operations import *
@@ -23,6 +24,8 @@ class GadgetHiHTTPHandler(SimpleHTTPRequestHandler):
 	"""
 	server_configs = {}
 	service_redirect = None
+	header = {}
+	CORS = False
 
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
@@ -40,6 +43,14 @@ class GadgetHiHTTPHandler(SimpleHTTPRequestHandler):
 		This is the function to initialize configs 
 		"""
 		cls.service_redirect = service_redirect
+
+	@classmethod
+	def initialize_header(cls, header,CORS):
+		"""
+		This is the function to initialize configs 
+		"""
+		cls.header = header
+		cls.CORS = CORS
 
 	def do_GET(self):
 		print ("Inside server do_GET")
@@ -99,6 +110,10 @@ class GadgetHiHTTPHandler(SimpleHTTPRequestHandler):
 			else:
 				self.wfile.write(bytes(str(response), 'utf-8'))
 
+	def do_OPTIONS(self):
+		self.send_response(200, "ok")
+		self.end_headers()
+		
 	def do_POST(self):
 		print ("Inside server do_POST")
 		d = {}
@@ -177,6 +192,12 @@ class GadgetHiHTTPHandler(SimpleHTTPRequestHandler):
 
 	def end_headers(self):
 		# Can add CORS restrictions here
+		if self.CORS:
+			self.send_header('Access-Control-Allow-Origin', '*')
+			self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+			self.send_header("Access-Control-Allow-Headers", 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Gadgethi-Key,Hmac256-Result,time,Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers')
+		for key,values in self.header.items():
+			self.send_header(key,values)
 		SimpleHTTPRequestHandler.end_headers(self)
 
 	# Helper Functions
@@ -264,7 +285,7 @@ class GadgetHiHTTPHandler(SimpleHTTPRequestHandler):
 Represents the main class of 
 gadgethi server.
 """
-class GadgetHiServer(HTTPServer):
+class GadgetHiServer(ThreadingMixIn,HTTPServer):
 	"""
 	Schemes:
 		gadgethi server scheme and custom server scheme.
@@ -288,7 +309,7 @@ class GadgetHiServer(HTTPServer):
 	def __init__(self, table_list=[], initialize_func_list=[], desc="GadgetHi Main", 
 		configs={}, service_handler=lambda: None, 
 		config_path="", credential_path="",custom_event_handler=None, 
-		authentication=True, aws_fake_server=False, **kwargs):
+		authentication=True, aws_fake_server=False,CORS=False,header={}, **kwargs):
 
 		if aws_fake_server:
 			"""
@@ -327,6 +348,9 @@ class GadgetHiServer(HTTPServer):
 
 		local_server_address = (self.host, self.port)
 		super().__init__(local_server_address, self.http_handler)
+
+		# Set Headers and CORS
+		GadgetHiHTTPHandler.initialize_header(header,CORS)
 
 		# Set authentication
 		configs["serverAuthentication"] = authentication
